@@ -53,7 +53,7 @@ namespace TCGPocketAutomation
         private static (bool, double, System.Drawing.Point) Search(Mat screen, Mat template)
         {
             double ratio = screen.Width / 540;
-            screen = screen.Resize(new Size { Width = 540, Height = (int)(screen.Height / ratio)}); ;
+            screen = screen.Resize(new Size { Width = 540, Height = (int)(screen.Height / ratio) }); ;
 
             Mat result = screen.MatchTemplate(template, TemplateMatchModes.CCoeffNormed);
             Cv2.MinMaxLoc(result, out double minVal, out double maxVal, out Point minLoc, out Point maxLoc);
