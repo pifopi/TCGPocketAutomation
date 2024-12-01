@@ -7,6 +7,12 @@ namespace TCGPocketAutomation
 {
     public class ImageProcessing
     {
+        private static readonly Mat titleScreenTemplate = Cv2.ImRead("titleScreen.png");
+        private static readonly Mat wonderPickTemplate = Cv2.ImRead("wonderPick.png");
+        private static readonly Mat bonusWonderPickTemplate = Cv2.ImRead("bonusWonderPick.png");
+        private static readonly Mat OKTemplate = Cv2.ImRead("OK.png");
+        private static readonly Mat cardTemplate = Cv2.ImRead("card.png");
+
         private static Mat AsImage(Framebuffer framebuffer)
         {
             if (framebuffer.Header.Red.Length != 8 ||
@@ -44,14 +50,10 @@ namespace TCGPocketAutomation
             return mat;
         }
 
-        private static Mat titleScreenTemplate = Cv2.ImRead("titleScreen.png");
-        private static Mat wonderPickTemplate = Cv2.ImRead("wonderPick.png");
-        private static Mat bonusWonderPickTemplate = Cv2.ImRead("bonusWonderPick.png");
-        private static Mat OKTemplate = Cv2.ImRead("OK.png");
-        private static Mat cardTemplate = Cv2.ImRead("card.png");
-
-        private static (bool, System.Drawing.Point) Find(Mat screen, Mat template)
+        private static (bool, System.Drawing.Point) Find(Mat screen, Mat _template)
         {
+            double ratio = screen.Width / 540;
+            Mat template = _template.Resize(new Size { Height = (int)(ratio * _template.Height), Width = (int)(ratio * _template.Width) });
             Mat result = screen.MatchTemplate(template, TemplateMatchModes.CCoeffNormed);
             Cv2.MinMaxLoc(result, out double minVal, out double maxVal, out Point minLoc, out Point maxLoc);
             double matchThreshold = 0.8;

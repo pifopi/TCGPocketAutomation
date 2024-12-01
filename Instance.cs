@@ -1,7 +1,8 @@
-using AdvancedSharpAdbClient;
+﻿using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.DeviceCommands;
 using AdvancedSharpAdbClient.Models;
 using AdvancedSharpAdbClient.Receivers;
+using Auto_LDPlayer;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.CompilerServices;
@@ -12,16 +13,16 @@ namespace TCGPocketAutomation
     {
         public enum StatusEnum
         {
-            Disconnected,
-            Connected,
+            Available,
             CheckWonderPickPeriodically,
             CheckWonderPickOnce
         }
 
         private string _name = "New instance";
+        private bool _useLDPlayer = true;
         private string _ip = "127.0.0.1";
         private int _port = 5555;
-        private StatusEnum _status = StatusEnum.Disconnected;
+        private StatusEnum _status = StatusEnum.Available;
 
         private AdbClient adbClient = new AdbClient();
         private DeviceData deviceData;
@@ -34,6 +35,12 @@ namespace TCGPocketAutomation
         {
             get => _name;
             set { _name = value; OnPropertyChanged(); }
+        }
+
+        public bool UseLDPlayer
+        {
+            get => _useLDPlayer;
+            set { _useLDPlayer = value; OnPropertyChanged(); }
         }
 
         public string IP
@@ -60,24 +67,19 @@ namespace TCGPocketAutomation
             {
                 _status = value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(IsConnected));
-                OnPropertyChanged(nameof(IsDisconnected));
+                OnPropertyChanged(nameof(IsBusy));
+                OnPropertyChanged(nameof(IsAvailable));
             }
-        }
-
-        public bool IsConnected
-        {
-            get => _status == StatusEnum.Connected;
         }
 
         public bool IsBusy
         {
-            get => !IsConnected && !IsDisconnected;
+            get => _status != StatusEnum.Available;
         }
 
-        public bool IsDisconnected
+        public bool IsAvailable
         {
-            get => _status == StatusEnum.Disconnected;
+            get => _status == StatusEnum.Available;
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -87,41 +89,10 @@ namespace TCGPocketAutomation
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public void Connect()
-        {
-            if (!AdbServer.Instance.GetStatus().IsRunning)
-            {
-                AdbServer server = new AdbServer();
-                StartServerResult resultStartServer = server.StartServer("adb", false);
-                if (resultStartServer != StartServerResult.Started)
-                {
-                    throw new Exception("Can't start adb server, make sure you add adb.exe to your PATH");
-                }
-            }
-
-            string resultConnect = adbClient.Connect(IP, Port);
-            if (resultConnect != $"connected to {IP}:{Port}" &&
-                resultConnect != $"already connected to {IP}:{Port}")
-            {
-                throw new Exception(resultConnect);
-            }
-
-            foreach (DeviceData device in adbClient.GetDevices())
-            {
-                if (device.Serial == $"{IP}:{Port}")
-                {
-                    deviceData = device;
-                    break;
-                }
-            }
-
-            Status = StatusEnum.Connected;
-        }
-
         public void Stop()
         {
             cancellationTokenSource.Cancel();
-            Status = StatusEnum.Connected;
+            Status = StatusEnum.Available;
         }
 
         private async Task<(bool, Point)> WaitFor(Func<Framebuffer, (bool, Point)> check, Action action, int retry, int delay)
@@ -142,17 +113,37 @@ namespace TCGPocketAutomation
             return (found, location);
         }
 
-        private async Task OpenGame()
+        DeviceData GetDeviceData(string key)
         {
-            var receiver = new ConsoleOutputReceiver();
-            await adbClient.ExecuteRemoteCommandAsync("dumpsys activity", deviceData, receiver);
-            string output = receiver.ToString();
-            if (output.Contains("jp.pokemon.pokemontcgp"))
+            foreach (DeviceData device in adbClient.GetDevices())
             {
-                await adbClient.StopAppAsync(deviceData, "jp.pokemon.pokemontcgp", cancellationTokenSource.Token);
+                if (device.Serial == key)
+                {
+                    return deviceData = device;
+                }
+            }
+            throw new Exception($"Could not find {key} in list of adb devices");
+        }
+
+        private void ConnectViaIP()
+        {
+            string resultConnect = adbClient.Connect(IP, Port);
+            if (resultConnect != $"connected to {IP}:{Port}" &&
+                resultConnect != $"already connected to {IP}:{Port}")
+            {
+                throw new Exception(resultConnect);
             }
 
-            await adbClient.StartAppAsync(deviceData, "jp.pokemon.pokemontcgp", cancellationTokenSource.Token);
+            deviceData = GetDeviceData($"{IP}:{Port}");
+        }
+
+        private void ConnectViaLDPlayer()
+        {
+            deviceData = GetDeviceData($"emulator-{Port}");
+        }
+
+        private async Task GoPastTileScreen()
+        {
             (bool found, Point location) = await WaitFor(ImageProcessing.FindTitleScreen, () => { }, 60, 10_000);
             if (!found)
             {
@@ -220,8 +211,17 @@ namespace TCGPocketAutomation
 
         private async Task CheckWonderPickOnceAsync()
         {
-            //await OpenGame();
-            //await Task.Delay(30_000, cancellationTokenSource.Token);
+            if (UseLDPlayer)
+            {
+                LDPlayer.OpenApp(Auto_LDPlayer.Enums.LDType.Name, $"\"{Name}\"", "jp.pokemon.pokemontcgp");
+                await Task.Delay(60_000, cancellationTokenSource.Token);
+                ConnectViaLDPlayer();
+                await GoPastTileScreen();
+            }
+            else
+            {
+                ConnectViaIP();
+            }
 
             await OpenWonderPickMenu();
             await Task.Delay(30_000, cancellationTokenSource.Token);
@@ -241,6 +241,11 @@ namespace TCGPocketAutomation
             }
             await ReturnToMainMenu();
             await Task.Delay(30_000, cancellationTokenSource.Token);
+
+            if (UseLDPlayer)
+            {
+                LDPlayer.Close(Auto_LDPlayer.Enums.LDType.Name, $"\"{Name}\"");
+            }
         }
 
         public async void CheckWonderPickPeriodically()
@@ -251,17 +256,18 @@ namespace TCGPocketAutomation
                 while (true)
                 {
                     await CheckWonderPickOnceAsync();
-                    await Task.Delay(15 * 60 * 1_000, cancellationTokenSource.Token);
+                    await Task.Delay(10 * 60 * 1_000, cancellationTokenSource.Token);
                 }
             }
             catch (Exception exception)
             {
                 await logger.Log($"<@282197676982927375> An exception has been raised:{exception}");
+                LDPlayer.Close(Auto_LDPlayer.Enums.LDType.Name, $"\"{Name}\"");
                 CheckWonderPickPeriodically();
             }
             finally
             {
-                Status = StatusEnum.Connected;
+                Status = StatusEnum.Available;
             }
         }
 
@@ -278,7 +284,7 @@ namespace TCGPocketAutomation
             }
             finally
             {
-                Status = StatusEnum.Connected;
+                Status = StatusEnum.Available;
             }
         }
     }

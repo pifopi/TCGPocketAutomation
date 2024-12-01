@@ -1,4 +1,7 @@
-﻿using System.Collections.ObjectModel;
+﻿using AdvancedSharpAdbClient.Models;
+using AdvancedSharpAdbClient;
+using Auto_LDPlayer;
+using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace TCGPocketAutomation
@@ -14,19 +17,31 @@ namespace TCGPocketAutomation
         {
             InitializeComponent();
 
+            LDPlayer.PathLD = "C:\\LDPlayer\\LDPlayer9\\ldconsole.exe";
+
+            if (!AdbServer.Instance.GetStatus().IsRunning)
+            {
+                AdbServer server = new AdbServer();
+                StartServerResult resultStartServer = server.StartServer("adb", false);
+                if (resultStartServer != StartServerResult.Started)
+                {
+                    throw new Exception("Can't start adb server, make sure you add adb.exe to your PATH");
+                }
+            }
+
             //Instances = new ObservableCollection<Instance>();
             Instances = new ObservableCollection<Instance>
             {
-                new Instance { Name = "Compte 1", Port = 5585 },
-                new Instance { Name = "Compte 2 - Mewtwo", Port = 5595 },
-                new Instance { Name = "Compte 3 - Mewtwo", Port = 5605 },
-                new Instance { Name = "Compte 4 - Mewtwo", Port = 5615 },
-                new Instance { Name = "Compte 5 - Pikachu", Port = 5625 },
-                new Instance { Name = "Compte 6 - Pikachu", Port = 5635 },
-                new Instance { Name = "Compte 7 - Pikachu", Port = 5645 },
-                new Instance { Name = "Compte 8 - Dracaufeu", Port = 5655 },
-                new Instance { Name = "Compte 9 - Dracaufeu", Port = 5665 },
-                new Instance { Name = "Compte 10 - Dracaufeu", Port = 5675 }
+                new Instance { Name = "Compte 01", UseLDPlayer = false, IP = "192.168.1.63"},
+                new Instance { Name = "Compte 02 - Mewtwo", Port = 5554 },
+                new Instance { Name = "Compte 03 - Mewtwo", Port = 5556 },
+                new Instance { Name = "Compte 04 - Mewtwo", Port = 5558 },
+                new Instance { Name = "Compte 05 - Pikachu", Port = 5560 },
+                new Instance { Name = "Compte 06 - Pikachu", Port = 5562 },
+                new Instance { Name = "Compte 07 - Pikachu", Port = 5564 },
+                new Instance { Name = "Compte 08 - Dracaufeu", Port = 5566 },
+                new Instance { Name = "Compte 09 - Dracaufeu", Port = 5568 },
+                new Instance { Name = "Compte 10 - Dracaufeu", Port = 5570 }
             };
             DataContext = this;
         }
@@ -39,11 +54,6 @@ namespace TCGPocketAutomation
             }
             FrameworkElement frameworkElement = (FrameworkElement)sender;
             return (Instance)frameworkElement.DataContext;
-        }
-
-        public void Connect(object sender, RoutedEventArgs e)
-        {
-            AsInstance(sender).Connect();
         }
 
         public void Stop(object sender, RoutedEventArgs e)

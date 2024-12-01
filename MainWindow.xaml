@@ -1,4 +1,4 @@
-<Window x:Class="TCGPocketAutomation.MainWindow"
+﻿<Window x:Class="TCGPocketAutomation.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -15,16 +15,10 @@
                 VerticalAlignment="Stretch">
             <DataGrid.Columns>
                 <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
+                <DataGridTextColumn Header="Use LDPlayer" Binding="{Binding UseLDPlayer}" />
                 <DataGridTextColumn Header="Ip" Binding="{Binding IP}" />
                 <DataGridTextColumn Header="Port" Binding="{Binding Port}" />
                 <DataGridTextColumn Header="Status" Binding="{Binding Status, Mode=OneWay}" />
-                <DataGridTemplateColumn Header="Connect">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <Button Content="Run" Click="Connect" IsEnabled="{Binding IsDisconnected, Mode=OneWay}" />
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Stop">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
@@ -35,14 +29,14 @@
                 <DataGridTemplateColumn Header="Check wonder pick periodically">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Run" Click="CheckWonderPickPeriodically" IsEnabled="{Binding IsConnected, Mode=OneWay}" />
+                            <Button Content="Run" Click="CheckWonderPickPeriodically" IsEnabled="{Binding IsAvailable, Mode=OneWay}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Check wonder pick once">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Run" Click="CheckWonderPickOnce" IsEnabled="{Binding IsConnected, Mode=OneWay}" />
+                            <Button Content="Run" Click="CheckWonderPickOnce" IsEnabled="{Binding IsAvailable, Mode=OneWay}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
