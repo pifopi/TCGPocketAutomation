@@ -50,52 +50,45 @@ namespace TCGPocketAutomation
             return mat;
         }
 
-        private static (bool, System.Drawing.Point) Find(Mat screen, Mat template)
+        private static (bool, double, System.Drawing.Point) Search(Mat screen, Mat template)
         {
             double ratio = screen.Width / 540;
             screen = screen.Resize(new Size { Width = 540, Height = (int)(screen.Height / ratio)}); ;
 
             Mat result = screen.MatchTemplate(template, TemplateMatchModes.CCoeffNormed);
             Cv2.MinMaxLoc(result, out double minVal, out double maxVal, out Point minLoc, out Point maxLoc);
-            double matchThreshold = 0.8;
-            if (maxVal >= matchThreshold)
-            {
+
 #if SAVE_IMAGE
-                Rect matchRect = new Rect(maxLoc, new Size(template.Width, template.Height));
-                Cv2.Rectangle(screen, matchRect, Scalar.Red, 2);
-                screen.SaveImage("Find.png");
+            Rect matchRect = new Rect(maxLoc, new Size(template.Width, template.Height));
+            Cv2.Rectangle(screen, matchRect, Scalar.Red, 2);
+            screen.SaveImage("Search.png");
 #endif
-                return (true, new System.Drawing.Point((int)((maxLoc.X + template.Width / 2) * ratio), (int)((maxLoc.Y + template.Height / 2) * ratio)));
-            }
-            else
-            {
-                return (false, new System.Drawing.Point(0, 0));
-            }
+            return (maxVal > 0.8, maxVal, new System.Drawing.Point((int)((maxLoc.X + template.Width / 2) * ratio), (int)((maxLoc.Y + template.Height / 2) * ratio)));
         }
 
-        public static (bool, System.Drawing.Point) FindTitleScreen(Framebuffer framebuffer)
+        public static (bool, double, System.Drawing.Point) SearchTitleScreen(Framebuffer framebuffer)
         {
-            return Find(AsImage(framebuffer), titleScreenTemplate);
+            return Search(AsImage(framebuffer), titleScreenTemplate);
         }
 
-        public static (bool, System.Drawing.Point) FindWonderPick(Framebuffer framebuffer)
+        public static (bool, double, System.Drawing.Point) SearchWonderPick(Framebuffer framebuffer)
         {
-            return Find(AsImage(framebuffer), wonderPickTemplate);
+            return Search(AsImage(framebuffer), wonderPickTemplate);
         }
 
-        public static (bool, System.Drawing.Point) FindBonusWonderPick(Framebuffer framebuffer)
+        public static (bool, double, System.Drawing.Point) SearchBonusWonderPick(Framebuffer framebuffer)
         {
-            return Find(AsImage(framebuffer), bonusWonderPickTemplate);
+            return Search(AsImage(framebuffer), bonusWonderPickTemplate);
         }
 
-        public static (bool, System.Drawing.Point) FindOK(Framebuffer framebuffer)
+        public static (bool, double, System.Drawing.Point) SearchOK(Framebuffer framebuffer)
         {
-            return Find(AsImage(framebuffer), OKTemplate);
+            return Search(AsImage(framebuffer), OKTemplate);
         }
 
-        public static (bool, System.Drawing.Point) FindCard(Framebuffer framebuffer)
+        public static (bool, double, System.Drawing.Point) SearchCard(Framebuffer framebuffer)
         {
-            return Find(AsImage(framebuffer), cardTemplate);
+            return Search(AsImage(framebuffer), cardTemplate);
         }
     }
 }
