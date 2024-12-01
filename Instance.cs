@@ -1,4 +1,4 @@
-﻿using AdvancedSharpAdbClient;
+using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.DeviceCommands;
 using AdvancedSharpAdbClient.Models;
 using Auto_LDPlayer;
@@ -88,8 +88,9 @@ namespace TCGPocketAutomation
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        public void Stop()
+        public async void Stop()
         {
+            await logger.Log($"{LogHeader} - Stop");
             cancellationTokenSource.Cancel();
             Status = StatusEnum.Available;
         }
@@ -149,10 +150,11 @@ namespace TCGPocketAutomation
 
         private async Task GoPastTileScreen()
         {
+            await logger.Log($"{LogHeader} - GoPastTileScreen");
             (bool found, double value, Point location) = await WaitFor(ImageProcessing.SearchTitleScreen, () => { }, 60, 10_000);
             if (!found)
             {
-                throw new Exception($"{LogHeader} - OpenGame - Can't find the title screen template (${value})");
+                throw new Exception($"{LogHeader} - OpenGame - Could not find the title screen template (${value})");
             }
 
             await logger.Log($"{LogHeader} - OpenGame - Found in location:{location} (${value})");
@@ -163,10 +165,11 @@ namespace TCGPocketAutomation
 
         private async Task OpenWonderPickMenu()
         {
+            await logger.Log($"{LogHeader} - OpenWonderPickMenu");
             (bool found, double value, Point location) = await WaitFor(ImageProcessing.SearchWonderPick, () => { }, 60, 1_000);
             if (!found)
             {
-                throw new Exception($"{LogHeader} - OpenWonderPickMenu - Can't find the wonder pick template (${value})");
+                throw new Exception($"{LogHeader} - OpenWonderPickMenu - Could not find the wonder pick template (${value})");
             }
 
             await logger.Log($"{LogHeader} - OpenWonderPickMenu - Found in location:{location} (${value})");
@@ -177,10 +180,11 @@ namespace TCGPocketAutomation
 
         private async Task ClickOK()
         {
+            await logger.Log($"{LogHeader} - ClickOK");
             (bool found, double value, Point location) = await WaitFor(ImageProcessing.SearchOK, () => { }, 60, 1_000);
             if (!found)
             {
-                throw new Exception($"{LogHeader} - ClickOK - Can't find the OK template (${value})");
+                throw new Exception($"{LogHeader} - ClickOK - Could not find the OK template (${value})");
             }
 
             await logger.Log($"{LogHeader} - ClickOK - Found in location:{location} (${value})");
@@ -191,10 +195,11 @@ namespace TCGPocketAutomation
 
         private async Task ClickTopRightCard()
         {
+            await logger.Log($"{LogHeader} - ClickTopRightCard");
             (bool found, double value, Point location) = await WaitFor(ImageProcessing.SearchCard, () => { }, 60, 1_000);
             if (!found)
             {
-                throw new Exception($"{LogHeader} - ClickTopRightCard - Can't find the card template (${value})");
+                throw new Exception($"{LogHeader} - ClickTopRightCard - Could not find the card template (${value})");
             }
 
             await logger.Log($"{LogHeader} - ClickTopRightCard - Found in location:{location} (${value})");
@@ -205,10 +210,11 @@ namespace TCGPocketAutomation
 
         private async Task ReturnToMainMenu()
         {
+            await logger.Log($"{LogHeader} - ReturnToMainMenu");
             (bool found, double value, Point location) = await WaitFor(ImageProcessing.SearchWonderPick, async () => { await adbClient.ClickBackButtonAsync(deviceData, cancellationTokenSource.Token); }, 60, 10_000);
             if (!found)
             {
-                throw new Exception($"{LogHeader} - ReturnToMainMenu - Can't return to main menu (${value})");
+                throw new Exception($"{LogHeader} - ReturnToMainMenu - Could not return to main menu (${value})");
             }
 
             await logger.Log($"{LogHeader} - ReturnToMainMenu - Found in location:{location} (${value})");
@@ -216,6 +222,7 @@ namespace TCGPocketAutomation
 
         private async Task CheckWonderPickOnceAsync()
         {
+            await logger.Log($"{LogHeader} - CheckWonderPickOnceAsync");
             if (UseLDPlayer)
             {
                 LDPlayer.OpenApp(Auto_LDPlayer.Enums.LDType.Name, GetLDPlayerName(Name), "jp.pokemon.pokemontcgp");
@@ -255,6 +262,7 @@ namespace TCGPocketAutomation
 
         public async void CheckWonderPickPeriodically()
         {
+            await logger.Log($"{LogHeader} - CheckWonderPickPeriodically");
             try
             {
                 Status = StatusEnum.CheckWonderPickPeriodically;
@@ -281,6 +289,7 @@ namespace TCGPocketAutomation
 
         public async void CheckWonderPickOnce()
         {
+            await logger.Log($"{LogHeader} - CheckWonderPickOnce");
             try
             {
                 Status = StatusEnum.CheckWonderPickOnce;
