@@ -1,7 +1,6 @@
-using AdvancedSharpAdbClient;
+﻿using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.DeviceCommands;
 using AdvancedSharpAdbClient.Models;
-using Auto_LDPlayer;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.CompilerServices;
@@ -88,10 +87,37 @@ namespace TCGPocketAutomation
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
+        private void ExecuteCmd(string cmd)
+        {
+            System.Diagnostics.Process process = new System.Diagnostics.Process();
+            System.Diagnostics.ProcessStartInfo startInfo = new System.Diagnostics.ProcessStartInfo();
+            startInfo.WindowStyle = System.Diagnostics.ProcessWindowStyle.Hidden;
+            startInfo.FileName = "cmd.exe";
+            startInfo.Arguments = cmd;
+            process.StartInfo = startInfo;
+            process.Start();
+        }
+
+        private async Task OpenLDPlayer()
+        {
+            ExecuteCmd($"ldconsole.exe quit --name \"{Name}\"");
+            await Task.Delay(60_000, cancellationTokenSource.Token);
+        }
+
+        private async Task CloseLDPlayer()
+        {
+            ExecuteCmd($"ldconsole.exe launchex --name \"{Name}\" --packagename jp.pokemon.pokemontcgp");
+            await Task.Delay(10_000, cancellationTokenSource.Token);
+        }
+
         public async void Stop()
         {
             await logger.Log($"{LogHeader} - Stop");
             cancellationTokenSource.Cancel();
+            if (UseLDPlayer)
+            {
+                await CloseLDPlayer();
+            }
             Status = StatusEnum.Available;
         }
 
@@ -125,12 +151,6 @@ namespace TCGPocketAutomation
             }
             throw new Exception($"Could not find {key} in list of adb devices");
         }
-
-        private string GetLDPlayerName(string name)
-        {
-            return $"\"{Name}\"";
-        }
-
         private void ConnectViaIP()
         {
             string resultConnect = adbClient.Connect(IP, Port);
@@ -225,7 +245,7 @@ namespace TCGPocketAutomation
             await logger.Log($"{LogHeader} - CheckWonderPickOnceAsync");
             if (UseLDPlayer)
             {
-                LDPlayer.OpenApp(Auto_LDPlayer.Enums.LDType.Name, GetLDPlayerName(Name), "jp.pokemon.pokemontcgp");
+                await OpenLDPlayer();
                 await Task.Delay(60_000, cancellationTokenSource.Token);
                 ConnectViaLDPlayer();
                 await GoPastTileScreen();
@@ -256,7 +276,7 @@ namespace TCGPocketAutomation
 
             if (UseLDPlayer)
             {
-                LDPlayer.Close(Auto_LDPlayer.Enums.LDType.Name, GetLDPlayerName(Name));
+                await CloseLDPlayer();
             }
         }
 
@@ -274,15 +294,22 @@ namespace TCGPocketAutomation
             }
             catch (Exception exception)
             {
-                await logger.Log($"<@282197676982927375> An exception has been raised:{exception}");
-                if (UseLDPlayer)
+                if (exception is TaskCanceledException || exception is OperationCanceledException)
                 {
-                    LDPlayer.Close(Auto_LDPlayer.Enums.LDType.Name, GetLDPlayerName(Name));
+                    cancellationTokenSource = new CancellationTokenSource();
                 }
-                CheckWonderPickPeriodically();
+                else
+                {
+                    await logger.Log($"<@282197676982927375> An exception has been raised:{exception}");
+                    CheckWonderPickPeriodically();
+                }
             }
             finally
             {
+                if (UseLDPlayer)
+                {
+                    await CloseLDPlayer();
+                }
                 Status = StatusEnum.Available;
             }
         }
@@ -297,10 +324,21 @@ namespace TCGPocketAutomation
             }
             catch (Exception exception)
             {
-                await logger.Log($"<@282197676982927375> An exception has been raised:{exception}");
+                if (exception is TaskCanceledException || exception is OperationCanceledException)
+                {
+                    cancellationTokenSource = new CancellationTokenSource();
+                }
+                else
+                {
+                    await logger.Log($"<@282197676982927375> An exception has been raised:{exception}");
+                }
             }
             finally
             {
+                if (UseLDPlayer)
+                {
+                    await CloseLDPlayer();
+                }
                 Status = StatusEnum.Available;
             }
         }

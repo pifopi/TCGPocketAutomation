@@ -1,6 +1,5 @@
 ﻿using AdvancedSharpAdbClient.Models;
 using AdvancedSharpAdbClient;
-using Auto_LDPlayer;
 using System.Collections.ObjectModel;
 using System.Windows;
 
@@ -16,8 +15,6 @@ namespace TCGPocketAutomation
         public MainWindow()
         {
             InitializeComponent();
-
-            LDPlayer.PathLD = "C:\\LDPlayer\\LDPlayer9\\ldconsole.exe";
 
             if (!AdbServer.Instance.GetStatus().IsRunning)
             {
