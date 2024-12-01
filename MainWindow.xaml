@@ -1,4 +1,4 @@
-﻿<Window x:Class="TCGPocketAutomation.MainWindow"
+<Window x:Class="TCGPocketAutomation.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -22,21 +22,21 @@
                 <DataGridTemplateColumn Header="Stop">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Run" Click="Stop" IsEnabled="{Binding IsBusy, Mode=OneWay}" />
+                            <Button Content="Execute" Click="Stop" IsEnabled="{Binding IsBusy, Mode=OneWay}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Check wonder pick periodically">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Run" Click="CheckWonderPickPeriodically" IsEnabled="{Binding IsAvailable, Mode=OneWay}" />
+                            <Button Content="Execute" Click="CheckWonderPickPeriodically" IsEnabled="{Binding IsAvailable, Mode=OneWay}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
                 <DataGridTemplateColumn Header="Check wonder pick once">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Run" Click="CheckWonderPickOnce" IsEnabled="{Binding IsAvailable, Mode=OneWay}" />
+                            <Button Content="Execute" Click="CheckWonderPickOnce" IsEnabled="{Binding IsAvailable, Mode=OneWay}" />
                         </DataTemplate>
                     </DataGridTemplateColumn.CellTemplate>
                 </DataGridTemplateColumn>
