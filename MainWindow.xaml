@@ -1,4 +1,4 @@
-<Window x:Class="TCGPocketAutomation.MainWindow"
+﻿<Window x:Class="TCGPocketAutomation.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
@@ -9,8 +9,7 @@
     <Grid>
         <DataGrid ItemsSource="{Binding Instances}"
                 AutoGenerateColumns="False"
-                CanUserAddRows="True"
-                CanUserDeleteRows="True"
+                CanUserAddRows="False"
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch">
             <DataGrid.Columns>
