@@ -1,4 +1,4 @@
-﻿using AdvancedSharpAdbClient;
+using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.DeviceCommands;
 using AdvancedSharpAdbClient.Models;
 using AdvancedSharpAdbClient.Receivers;
@@ -50,7 +50,7 @@ namespace TCGPocketAutomation
 
         private string LogHeader
         {
-            get => $"{Name} {IP}:{Port}";
+            get => $"[{DateTime.Now}]\t{Name}\t{IP}:{Port}";
         }
 
         public StatusEnum Status

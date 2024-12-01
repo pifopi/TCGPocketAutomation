@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
+using System.IO;
 
 namespace TCGPocketAutomation
 {
@@ -7,10 +8,13 @@ namespace TCGPocketAutomation
     {
         private DiscordSocketClient client = new DiscordSocketClient();
         private List<string> waitingMessages = new List<string>();
+        private StreamWriter streamWriter = new StreamWriter("log.txt");
 
         public async Task Log(string message)
         {
-            switch(client.LoginState)
+            streamWriter.WriteLine(message);
+            await streamWriter.FlushAsync();
+            switch (client.LoginState)
             {
                 case LoginState.LoggingIn:
                 case LoginState.LoggingOut:
