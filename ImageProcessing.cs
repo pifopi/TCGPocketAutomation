@@ -50,10 +50,11 @@ namespace TCGPocketAutomation
             return mat;
         }
 
-        private static (bool, System.Drawing.Point) Find(Mat screen, Mat _template)
+        private static (bool, System.Drawing.Point) Find(Mat screen, Mat template)
         {
             double ratio = screen.Width / 540;
-            Mat template = _template.Resize(new Size { Height = (int)(ratio * _template.Height), Width = (int)(ratio * _template.Width) });
+            screen = screen.Resize(new Size { Width = 540, Height = (int)(screen.Height / ratio)}); ;
+
             Mat result = screen.MatchTemplate(template, TemplateMatchModes.CCoeffNormed);
             Cv2.MinMaxLoc(result, out double minVal, out double maxVal, out Point minLoc, out Point maxLoc);
             double matchThreshold = 0.8;
@@ -64,7 +65,7 @@ namespace TCGPocketAutomation
                 Cv2.Rectangle(screen, matchRect, Scalar.Red, 2);
                 screen.SaveImage("Find.png");
 #endif
-                return (true, new System.Drawing.Point(maxLoc.X + template.Width / 2, maxLoc.Y + template.Height / 2));
+                return (true, new System.Drawing.Point((int)((maxLoc.X + template.Width / 2) * ratio), (int)((maxLoc.Y + template.Height / 2) * ratio)));
             }
             else
             {
