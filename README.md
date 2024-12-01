@@ -6,7 +6,6 @@ Those are simple scripts to automate pokemon TCG pocket over adb and using open 
 //TODO add the ability to disconnect from adb
 //TODO cancel ongoing work with stop button
 //TODO log to a file and not to discord
-//TODO ressources for button + template files
 //TODO icon for button
 //TODO remove button for the empty line
 //TODO save settings to a file

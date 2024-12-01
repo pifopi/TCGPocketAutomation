@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
@@ -13,9 +13,6 @@
     <None Remove="bonusWonderPick.png" />
     <None Remove="card.png" />
     <None Remove="OK.png" />
-    <None Remove="startIcon.png" />
-    <None Remove="startIcon.png" />
-    <None Remove="Thumbs.db" />
     <None Remove="titleScreen.png" />
     <None Remove="wonderPick.png" />
   </ItemGroup>
@@ -25,6 +22,24 @@
     <PackageReference Include="Discord.Net" Version="3.16.0" />
     <PackageReference Include="OpenCvSharp4" Version="4.10.0.20241108" />
     <PackageReference Include="OpenCvSharp4.runtime.win" Version="4.10.0.20241108" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="bonusWonderPick.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="card.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="OK.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="titleScreen.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+    <Content Include="wonderPick.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 
 </Project>
