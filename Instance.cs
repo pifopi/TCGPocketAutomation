@@ -54,11 +54,6 @@ namespace TCGPocketAutomation
             set { _port = value; OnPropertyChanged(); }
         }
 
-        private string LogHeader
-        {
-            get => $"[{DateTime.Now}]\t{Name}\t{IP}:{Port}";
-        }
-
         public StatusEnum Status
         {
             get => _status;
@@ -79,6 +74,11 @@ namespace TCGPocketAutomation
         public bool IsAvailable
         {
             get => _status == StatusEnum.Available;
+        }
+
+        private string LogHeader
+        {
+            get => $"[{DateTime.Now}]\t{Name}\t{IP}:{Port}";
         }
 
         public event PropertyChangedEventHandler PropertyChanged;
@@ -113,7 +113,7 @@ namespace TCGPocketAutomation
             return (found, value, location);
         }
 
-        DeviceData GetDeviceData(string key)
+        private DeviceData GetDeviceData(string key)
         {
             foreach (DeviceData device in adbClient.GetDevices())
             {
@@ -123,6 +123,11 @@ namespace TCGPocketAutomation
                 }
             }
             throw new Exception($"Could not find {key} in list of adb devices");
+        }
+
+        private string GetLDPlayerName(string name)
+        {
+            return $"\"{Name}\"";
         }
 
         private void ConnectViaIP()
@@ -213,7 +218,7 @@ namespace TCGPocketAutomation
         {
             if (UseLDPlayer)
             {
-                LDPlayer.OpenApp(Auto_LDPlayer.Enums.LDType.Name, $"\"{Name}\"", "jp.pokemon.pokemontcgp");
+                LDPlayer.OpenApp(Auto_LDPlayer.Enums.LDType.Name, GetLDPlayerName(Name), "jp.pokemon.pokemontcgp");
                 await Task.Delay(60_000, cancellationTokenSource.Token);
                 ConnectViaLDPlayer();
                 await GoPastTileScreen();
@@ -244,7 +249,7 @@ namespace TCGPocketAutomation
 
             if (UseLDPlayer)
             {
-                LDPlayer.Close(Auto_LDPlayer.Enums.LDType.Name, $"\"{Name}\"");
+                LDPlayer.Close(Auto_LDPlayer.Enums.LDType.Name, GetLDPlayerName(Name));
             }
         }
 
@@ -262,7 +267,10 @@ namespace TCGPocketAutomation
             catch (Exception exception)
             {
                 await logger.Log($"<@282197676982927375> An exception has been raised:{exception}");
-                LDPlayer.Close(Auto_LDPlayer.Enums.LDType.Name, $"\"{Name}\"");
+                if (UseLDPlayer)
+                {
+                    LDPlayer.Close(Auto_LDPlayer.Enums.LDType.Name, GetLDPlayerName(Name));
+                }
                 CheckWonderPickPeriodically();
             }
             finally
