@@ -14,6 +14,8 @@ namespace TCGPocketAutomation
 
         public MainWindow()
         {
+            Logger.Log(Logger.LogLevel.Info, "", "-------------------------------------------------------------------------");
+            Logger.Log(Logger.LogLevel.Info, "", "Starting the program");
             InitializeComponent();
 
             Utils.StartADBServer();

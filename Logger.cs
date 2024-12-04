@@ -1,7 +1,6 @@
 ﻿using Discord;
 using Discord.WebSocket;
 using NLog;
-using NLog.Config;
 using NLog.Targets;
 using System.Runtime.CompilerServices;
 
