@@ -104,28 +104,19 @@ namespace TCGPocketAutomation
         {
             using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {
-                Point location = new Point();
                 {
-                    (bool found, double alpha, location) = await WaitForAsync(ImageProcessing.SearchTitleScreen, () => { }, 60, 1_000);
+                    (bool found, double alpha, Point location) = await WaitForAsync(ImageProcessing.SearchTitleScreen, () => { }, 60, 1_000);
                     if (!found)
                     {
                         throw new Exception($"Could not find the title screen template ({alpha})");
                     }
 
-                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Title screen template found in location:{location} ({alpha})");
+                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found in location:{location} ({alpha})");
                     await Task.Delay(10_000, cancellationTokenSource.Token);
-                }
+                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location}");
+                    await adbClient.ClickAsync(deviceData, location, cancellationTokenSource.Token);
 
-                {
-                    (bool found, double alpha, Point _) = await WaitForAsync(ImageProcessing.SearchWonderPick, async () =>
-                        {
-                            Logger.Log(Logger.LogLevel.Debug, LogHeader, "Clicking bottom left");
-                            await adbClient.ClickAsync(deviceData, location, cancellationTokenSource.Token);
-                        }, 10, 10_000);
-                    if (!found)
-                    {
-                        throw new Exception($"Could not find the wonder pick template ({alpha})");
-                    }
+                    await ReturnToMainMenuAsync();
                 }
             }
         }
