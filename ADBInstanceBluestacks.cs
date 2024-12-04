@@ -8,12 +8,6 @@ namespace TCGPocketAutomation
         private int _port = 5555;
         private string _bluestacksName = "Pie64";
 
-        public string BluestacksName
-        {
-            get => _bluestacksName;
-            set { _bluestacksName = value; OnPropertyChanged(); }
-        }
-
         public string IP
         {
             get => _ip;
@@ -26,6 +20,12 @@ namespace TCGPocketAutomation
             set { _port = value; OnPropertyChanged(); }
         }
 
+        public string BluestacksName
+        {
+            get => _bluestacksName;
+            set { _bluestacksName = value; OnPropertyChanged(); }
+        }
+
         protected override string LogHeader
         {
             get => $"[{DateTime.Now}]\t{Name}\t{IP}:{Port}\t{BluestacksName}";
@@ -34,7 +34,7 @@ namespace TCGPocketAutomation
         protected override async Task ConnectToADBInstance()
         {
             await logger.Log($"{LogHeader} - ConnectToADBInstance Begin");
-            Utils.ExecuteCmd($"HD-Player.exe --instance {BluestacksName} --cmd launchAppWithBsx --package \"jp.pokemon.pokemontcgp\" --source desktop_shortcut");
+            Utils.ExecuteCmd($"HD-Player.exe --instance {BluestacksName} --cmd launchAppWithBsx --package jp.pokemon.pokemontcgp --source desktop_shortcut");
             await Task.Delay(60_000, cancellationTokenSource.Token);
             string resultConnect = adbClient.Connect(IP, Port);
             if (resultConnect != $"connected to {IP}:{Port}" &&

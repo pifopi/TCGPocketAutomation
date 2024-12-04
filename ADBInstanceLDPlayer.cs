@@ -6,11 +6,6 @@ namespace TCGPocketAutomation
     {
         private string _adbName = "emulator-5555";
 
-        private string LDPlayerName
-        {
-            get => $"\"{Name}\"";
-        }
-
         public string ADBName
         {
             get => _adbName;
@@ -20,6 +15,11 @@ namespace TCGPocketAutomation
         protected override string LogHeader
         {
             get => $"[{DateTime.Now}]\t{Name}\t{ADBName}";
+        }
+
+        private string LDPlayerName
+        {
+            get => $"\"{Name}\"";
         }
 
         protected override async Task ConnectToADBInstance()
