@@ -25,19 +25,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="bonusWonderPick.png">
+    <Content Include="data\bonusWonderPick.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="card.png">
+    <Content Include="data\card.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="OK.png">
+    <Content Include="data\OK.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="titleScreen.png">
+    <Content Include="data\titleScreen.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
-    <Content Include="wonderPick.png">
+    <Content Include="data\wonderPick.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>

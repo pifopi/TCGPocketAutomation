@@ -2,11 +2,15 @@
 
 Those are simple scripts to automate pokemon TCG pocket over adb and using open cv for template matching + discord message for logging what happened
 
-//TODO fix warnings  
-//TODO make discord messages prettier  
-//TODO add/remove instances  
-//TODO read/write settings from/to a file  
-//TODO make discord channel + ping as settings  
-//TODO make a setup guide  
-//  put adb in your PATH  
-//  have an environnement variable namled DISCORD_BOT_TOKEN with a discord bot token  
+# TODO list
+- fix compilation warnings
+- reduce wait time
+- make discord messages prettier
+- add/remove instances
+- read/write settings from/to a file
+- make discord channel + ping as settings
+- make a setup guide
+  - put adb, Bluestacks and LDPlayer in your PATH
+  - activate ADB on every bluestack instance
+  - activate ADB on every real phone instance + connect to it once
+  - have an environnement variable named DISCORD_BOT_TOKEN with a discord bot token

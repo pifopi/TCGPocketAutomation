@@ -7,11 +7,11 @@ namespace TCGPocketAutomation
 {
     public class ImageProcessing
     {
-        private static readonly Mat titleScreenTemplate = Cv2.ImRead("titleScreen.png");
-        private static readonly Mat wonderPickTemplate = Cv2.ImRead("wonderPick.png");
-        private static readonly Mat bonusWonderPickTemplate = Cv2.ImRead("bonusWonderPick.png");
-        private static readonly Mat OKTemplate = Cv2.ImRead("OK.png");
-        private static readonly Mat cardTemplate = Cv2.ImRead("card.png");
+        private static Mat titleScreenTemplate = Cv2.ImRead("data/titleScreen.png");
+        private static Mat wonderPickTemplate = Cv2.ImRead("data/wonderPick.png");
+        private static Mat bonusWonderPickTemplate = Cv2.ImRead("data/bonusWonderPick.png");
+        private static Mat OKTemplate = Cv2.ImRead("data/OK.png");
+        private static Mat cardTemplate = Cv2.ImRead("data/card.png");
 
         private static Mat AsImage(Framebuffer framebuffer)
         {

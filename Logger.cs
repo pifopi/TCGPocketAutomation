@@ -4,7 +4,7 @@ using System.IO;
 
 namespace TCGPocketAutomation
 {
-    internal class Logger
+    public class Logger
     {
         private DiscordSocketClient client = new DiscordSocketClient();
         private List<string> waitingMessages = new List<string>();
@@ -12,8 +12,18 @@ namespace TCGPocketAutomation
 
         public async Task Log(string message)
         {
+            await LogOnFile(message);
+            await LogOnDiscord(message);
+        }
+
+        private async Task LogOnFile(string message)
+        {
             streamWriter.WriteLine(message);
             await streamWriter.FlushAsync();
+        }
+
+        private async Task LogOnDiscord(string message)
+        {
             switch (client.LoginState)
             {
                 case LoginState.LoggingIn:
@@ -37,7 +47,7 @@ namespace TCGPocketAutomation
         {
             foreach (string waitingMessage in waitingMessages)
             {
-                await Log(waitingMessage);
+                await LogOnDiscord(waitingMessage);
             }
             waitingMessages.Clear();
         }
