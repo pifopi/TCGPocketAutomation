@@ -1,0 +1,109 @@
+{
+  "BluestacksInstances": [
+    {
+      "Name": "Compte 01",
+      "IP": "127.0.0.1",
+      "Port": 5565,
+      "BluestacksName": "Pie64_1"
+    },
+    {
+      "Name": "Compte 02 - Mewtwo",
+      "IP": "127.0.0.1",
+      "Port": 5575,
+      "BluestacksName": "Pie64_2"
+    },
+    {
+      "Name": "Compte 03 - Mewtwo",
+      "IP": "127.0.0.1",
+      "Port": 5585,
+      "BluestacksName": "Pie64_3"
+    },
+    {
+      "Name": "Compte 04 - Mewtwo",
+      "IP": "127.0.0.1",
+      "Port": 5595,
+      "BluestacksName": "Pie64_4"
+    },
+    {
+      "Name": "Compte 05 - Pikachu",
+      "IP": "127.0.0.1",
+      "Port": 5605,
+      "BluestacksName": "Pie64_5"
+    },
+    {
+      "Name": "Compte 06 - Pikachu",
+      "IP": "127.0.0.1",
+      "Port": 5615,
+      "BluestacksName": "Pie64_6"
+    },
+    {
+      "Name": "Compte 07 - Pikachu",
+      "IP": "127.0.0.1",
+      "Port": 5625,
+      "BluestacksName": "Pie64_7"
+    },
+    {
+      "Name": "Compte 08 - Dracaufeu",
+      "IP": "127.0.0.1",
+      "Port": 5635,
+      "BluestacksName": "Pie64_8"
+    },
+    {
+      "Name": "Compte 09 - Dracaufeu",
+      "IP": "127.0.0.1",
+      "Port": 5645,
+      "BluestacksName": "Pie64_9"
+    },
+    {
+      "Name": "Compte 10 - Dracaufeu",
+      "IP": "127.0.0.1",
+      "Port": 5655,
+      "BluestacksName": "Pie64_10"
+    }
+  ],
+  "LDPlayerInstances": [
+    {
+      "Name": "Compte 02 - Mewtwo",
+      "ADBName": "emulator-5554"
+    },
+    {
+      "Name": "Compte 03 - Mewtwo",
+      "ADBName": "emulator-5556"
+    },
+    {
+      "Name": "Compte 04 - Mewtwo",
+      "ADBName": "emulator-5558"
+    },
+    {
+      "Name": "Compte 05 - Pikachu",
+      "ADBName": "emulator-5560"
+    },
+    {
+      "Name": "Compte 06 - Pikachu",
+      "ADBName": "emulator-5562"
+    },
+    {
+      "Name": "Compte 07 - Pikachu",
+      "ADBName": "emulator-5564"
+    },
+    {
+      "Name": "Compte 08 - Dracaufeu",
+      "ADBName": "emulator-5566"
+    },
+    {
+      "Name": "Compte 09 - Dracaufeu",
+      "ADBName": "emulator-5568"
+    },
+    {
+      "Name": "Compte 10 - Dracaufeu",
+      "ADBName": "emulator-5570"
+    }
+  ],
+  "RealPhoneInstances": [
+    {
+      "Name": "Compte 01",
+      "IP": "192.168.1.63",
+      "Port": 5555
+    }
+  ]
+}

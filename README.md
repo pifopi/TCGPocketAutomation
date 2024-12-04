@@ -7,7 +7,6 @@ Those are simple scripts to automate pokemon TCG pocket over adb and using open 
 - reduce wait time
 - make discord messages prettier
 - add/remove instances
-- read/write settings from/to a file
 - make discord channel + ping as settings
 - make a setup guide
   - put adb, Bluestacks and LDPlayer in your PATH
