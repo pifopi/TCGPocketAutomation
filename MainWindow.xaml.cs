@@ -63,7 +63,7 @@ namespace TCGPocketAutomation
             DataContext = this;
         }
 
-        static private ADBInstance AsInstance(object sender)
+        static private ADBInstance AsADBInstance(object sender)
         {
             if (sender == null)
             {
@@ -75,17 +75,17 @@ namespace TCGPocketAutomation
 
         public void Stop(object sender, RoutedEventArgs e)
         {
-            AsInstance(sender).StopProgram();
+            AsADBInstance(sender).StopProgram();
         }
 
-        public void CheckWonderPickPeriodically(object sender, RoutedEventArgs e)
+        public async void CheckWonderPickPeriodically(object sender, RoutedEventArgs e)
         {
-            AsInstance(sender).CheckWonderPickPeriodically();
+            await AsADBInstance(sender).StartCheckWonderPickPeriodicallyAsync();
         }
 
-        public void CheckWonderPickOnce(object sender, RoutedEventArgs e)
+        public async void CheckWonderPickOnce(object sender, RoutedEventArgs e)
         {
-            AsInstance(sender).CheckWonderPickOnce();
+            await AsADBInstance(sender).StartCheckWonderPickOnceAsync();
         }
     }
 }

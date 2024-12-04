@@ -4,15 +4,13 @@ using System.Diagnostics;
 
 namespace TCGPocketAutomation
 {
-    public class Utils
+    public static class Utils
     {
         public static void ExecuteCmd(string cmd)
         {
             Process process = new Process();
-            ProcessStartInfo startInfo = new ProcessStartInfo();
+            ProcessStartInfo startInfo = new ProcessStartInfo("cmd.exe", $"/C {cmd}");
             startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            startInfo.FileName = "cmd.exe";
-            startInfo.Arguments = $"/C {cmd}";
             process.StartInfo = startInfo;
             process.Start();
         }

@@ -22,8 +22,6 @@ namespace TCGPocketAutomation
         protected AdbClient adbClient = new AdbClient();
         protected DeviceData deviceData = new DeviceData();
 
-        protected static Logger logger = new Logger();
-
         protected CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
 
         public string Name
@@ -63,26 +61,27 @@ namespace TCGPocketAutomation
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private async Task StartProgram(StatusEnum status, string programName)
+        private void StartProgram(StatusEnum status, string programName)
         {
             Status = status;
-            await logger.Log($"{LogHeader} - StartProgram {programName}");
+            Logger.Log(Logger.LogLevel.Info, LogHeader, $"StartProgram {programName}");
         }
 
-        public async Task StopProgram()
+        public void StopProgram()
         {
-            await logger.Log($"{LogHeader} - StopProgram Begin");
-            cancellationTokenSource.Cancel();
-            cancellationTokenSource = new CancellationTokenSource();
-            await logger.Log($"{LogHeader} - StopProgram End");
+            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader, ""))
+            {
+                cancellationTokenSource.Cancel();
+                cancellationTokenSource = new CancellationTokenSource();
+            }
             Status = StatusEnum.NotRunning;
         }
 
-        protected abstract Task ConnectToADBInstance();
+        protected abstract Task ConnectToADBInstanceAsync();
 
-        protected abstract Task DisconnectFromADBInstance();
+        protected abstract Task DisconnectFromADBInstanceAsync();
 
-        private async Task<(bool, double, Point)> WaitFor(Func<Framebuffer, (bool, double, Point)> check, Action action, uint retry, int millisecondsDelay)
+        private async Task<(bool, double, Point)> WaitForAsync(Func<Framebuffer, (bool, double, Point)> check, Action action, uint retry, int millisecondsDelay)
         {
             bool found = false;
             double alpha = 0;
@@ -101,128 +100,155 @@ namespace TCGPocketAutomation
             return (found, alpha, location);
         }
 
-        protected async Task GoPastTileScreen()
+        protected async Task GoPastTileScreenAsync()
         {
-            await logger.Log($"{LogHeader} - GoPastTileScreen");
-            (bool found, double alpha, Point location) = await WaitFor(ImageProcessing.SearchTitleScreen, () => { }, 60, 1_000);
-            if (!found)
+            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {
-                throw new Exception($"{LogHeader} - OpenGame - Could not find the title screen template ({alpha})");
-            }
+                Point location = new Point();
+                {
+                    (bool found, double alpha, location) = await WaitForAsync(ImageProcessing.SearchTitleScreen, () => { }, 60, 1_000);
+                    if (!found)
+                    {
+                        throw new Exception($"Could not find the title screen template ({alpha})");
+                    }
 
-            await logger.Log($"{LogHeader} - OpenGame - Found in location:{location} ({alpha})");
-            await Task.Delay(10_000, cancellationTokenSource.Token);
-            await logger.Log($"{LogHeader} - OpenGame - Clicking on location:{location}");
-            await adbClient.ClickAsync(deviceData, location, cancellationTokenSource.Token);
+                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Title screen template found in location:{location} ({alpha})");
+                    await Task.Delay(10_000, cancellationTokenSource.Token);
+                }
+
+                {
+                    (bool found, double alpha, Point _) = await WaitForAsync(ImageProcessing.SearchWonderPick, async () =>
+                        {
+                            Logger.Log(Logger.LogLevel.Debug, LogHeader, "Clicking bottom left");
+                            await adbClient.ClickAsync(deviceData, location, cancellationTokenSource.Token);
+                        }, 10, 10_000);
+                    if (!found)
+                    {
+                        throw new Exception($"Could not find the wonder pick template ({alpha})");
+                    }
+                }
+            }
         }
 
-        private async Task OpenWonderPickMenu()
+        private async Task OpenWonderPickMenuAsync()
         {
-            await logger.Log($"{LogHeader} - OpenWonderPickMenu");
-            (bool found, double alpha, Point location) = await WaitFor(ImageProcessing.SearchWonderPick, () => { }, 60, 1_000);
-            if (!found)
+            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {
-                throw new Exception($"{LogHeader} - OpenWonderPickMenu - Could not find the wonder pick template ({alpha})");
-            }
+                (bool found, double alpha, Point location) = await WaitForAsync(ImageProcessing.SearchWonderPick, () => { }, 60, 1_000);
+                if (!found)
+                {
+                    throw new Exception($"Could not find the wonder pick template ({alpha})");
+                }
 
-            await logger.Log($"{LogHeader} - OpenWonderPickMenu - Found in location:{location} ({alpha})");
-            await Task.Delay(10_000, cancellationTokenSource.Token);
-            await logger.Log($"{LogHeader} - OpenWonderPickMenu - Clicking on location:{location}");
-            await adbClient.ClickAsync(deviceData, location, cancellationTokenSource.Token);
+                Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found in location:{location} ({alpha})");
+                await Task.Delay(10_000, cancellationTokenSource.Token);
+                Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location}");
+                await adbClient.ClickAsync(deviceData, location, cancellationTokenSource.Token);
+            }
         }
 
-        private async Task ClickOK()
+        private async Task ClickOKAsync()
         {
-            await logger.Log($"{LogHeader} - ClickOK");
-            (bool found, double alpha, Point location) = await WaitFor(ImageProcessing.SearchOK, () => { }, 60, 1_000);
-            if (!found)
+            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {
-                throw new Exception($"{LogHeader} - ClickOK - Could not find the OK template ({alpha})");
-            }
+                (bool found, double alpha, Point location) = await WaitForAsync(ImageProcessing.SearchOK, () => { }, 60, 1_000);
+                if (!found)
+                {
+                    throw new Exception($"Could not find the OK template ({alpha})");
+                }
 
-            await logger.Log($"{LogHeader} - ClickOK - Found in location:{location} ({alpha})");
-            await Task.Delay(10_000, cancellationTokenSource.Token);
-            await logger.Log($"{LogHeader} - ClickOK - Clicking on location:{location}");
-            await adbClient.ClickAsync(deviceData, location, cancellationTokenSource.Token);
+                Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found in location:{location} ({alpha})");
+                await Task.Delay(10_000, cancellationTokenSource.Token);
+                Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location}");
+                await adbClient.ClickAsync(deviceData, location, cancellationTokenSource.Token);
+            }
         }
 
-        private async Task ClickTopRightCard()
+        private async Task ClickTopRightCardAsync()
         {
-            await logger.Log($"{LogHeader} - ClickTopRightCard");
-            (bool found, double alpha, Point location) = await WaitFor(ImageProcessing.SearchCard, () => { }, 60, 1_000);
-            if (!found)
+            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {
-                throw new Exception($"{LogHeader} - ClickTopRightCard - Could not find the card template ({alpha})");
-            }
+                (bool found, double alpha, Point location) = await WaitForAsync(ImageProcessing.SearchCard, () => { }, 60, 1_000);
+                if (!found)
+                {
+                    throw new Exception($"Could not find the card template ({alpha})");
+                }
 
-            await logger.Log($"{LogHeader} - ClickTopRightCard - Found in location:{location} ({alpha})");
-            await Task.Delay(10_000, cancellationTokenSource.Token);
-            await logger.Log($"{LogHeader} - ClickTopRightCard - Clicking on location:{location}");
-            await adbClient.ClickAsync(deviceData, location, cancellationTokenSource.Token);
+                Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found in location:{location} ({alpha})");
+                await Task.Delay(10_000, cancellationTokenSource.Token);
+                Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location}");
+                await adbClient.ClickAsync(deviceData, location, cancellationTokenSource.Token);
+            }
         }
 
-        private async Task ReturnToMainMenu()
+        private async Task ReturnToMainMenuAsync()
         {
-            await logger.Log($"{LogHeader} - ReturnToMainMenu");
-            (bool found, double alpha, Point location) = await WaitFor(ImageProcessing.SearchWonderPick, async () => { await adbClient.ClickBackButtonAsync(deviceData, cancellationTokenSource.Token); }, 60, 10_000);
-            if (!found)
+            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {
-                throw new Exception($"{LogHeader} - ReturnToMainMenu - Could not return to main menu ({alpha})");
+                (bool found, double alpha, Point _) = await WaitForAsync(ImageProcessing.SearchWonderPick, async () =>
+                    {
+                        Logger.Log(Logger.LogLevel.Debug, LogHeader, "Going back");
+                        await adbClient.ClickBackButtonAsync(deviceData, cancellationTokenSource.Token);
+                    }, 10, 10_000);
+                if (!found)
+                {
+                    throw new Exception($"Could not return to main menu ({alpha})");
+                }
             }
-
-            await logger.Log($"{LogHeader} - ReturnToMainMenu - Found in location:{location} ({alpha})");
         }
 
         private async Task CheckWonderPickOnceAsync()
         {
-            await logger.Log($"{LogHeader} - CheckWonderPickOnceAsync");
-            await OpenWonderPickMenu();
-
-            (bool found, double alpha, Point location) = await WaitFor(ImageProcessing.SearchBonusWonderPick, () => { }, 60, 1_000);
-            if (found)
+            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {
-                await Task.Delay(10_000, cancellationTokenSource.Token);
-                await adbClient.ClickAsync(deviceData, location, cancellationTokenSource.Token);
-                await Task.Delay(30_000, cancellationTokenSource.Token);
+                await OpenWonderPickMenuAsync();
 
-                await ClickOK();
-                await Task.Delay(30_000, cancellationTokenSource.Token);
+                (bool found, double alpha, Point location) = await WaitForAsync(ImageProcessing.SearchBonusWonderPick, () => { }, 60, 1_000);
+                if (found)
+                {
+                    await Task.Delay(10_000, cancellationTokenSource.Token);
+                    await adbClient.ClickAsync(deviceData, location, cancellationTokenSource.Token);
+                    await Task.Delay(30_000, cancellationTokenSource.Token);
 
-                await ClickTopRightCard();
-                await Task.Delay(30_000, cancellationTokenSource.Token);
+                    await ClickOKAsync();
+                    await Task.Delay(30_000, cancellationTokenSource.Token);
+
+                    await ClickTopRightCardAsync();
+                    await Task.Delay(30_000, cancellationTokenSource.Token);
+                }
+                await ReturnToMainMenuAsync();
             }
-            await ReturnToMainMenu();
         }
 
-        public async Task CheckWonderPickPeriodically()
+        public async Task StartCheckWonderPickPeriodicallyAsync()
         {
-            await StartProgram(StatusEnum.CheckWonderPickPeriodically, "CheckWonderPickPeriodically");
+            StartProgram(StatusEnum.CheckWonderPickPeriodically, "CheckWonderPickPeriodically");
             while (true)
             {
                 try
                 {
-                    await ConnectToADBInstance();
+                    await ConnectToADBInstanceAsync();
                     await CheckWonderPickOnceAsync();
-                    await DisconnectFromADBInstance();
+                    await DisconnectFromADBInstanceAsync();
                     await Task.Delay(10 * 60 * 1_000, cancellationTokenSource.Token);
                 }
                 catch (Exception exception)
                 {
                     if (exception is not TaskCanceledException && exception is not OperationCanceledException)
                     {
-                        await logger.Log($"<@282197676982927375> An exception has been raised:{exception}");
+                        Logger.Log(Logger.LogLevel.Warning, LogHeader, $"<@282197676982927375> An exception has been raised:{exception}");
                     }
                 }
             }
         }
 
-        public async Task CheckWonderPickOnce()
+        public async Task StartCheckWonderPickOnceAsync()
         {
-            await StartProgram(StatusEnum.CheckWonderPickOnce, "CheckWonderPickOnce");
-            await ConnectToADBInstance();
+            StartProgram(StatusEnum.CheckWonderPickOnce, "CheckWonderPickOnce");
+            await ConnectToADBInstanceAsync();
             await CheckWonderPickOnceAsync();
-            await DisconnectFromADBInstance();
-            await StopProgram();
+            await DisconnectFromADBInstanceAsync();
+            StopProgram();
         }
     }
 }

@@ -5,7 +5,7 @@ using OpenCvSharp;
 
 namespace TCGPocketAutomation
 {
-    public class ImageProcessing
+    public static class ImageProcessing
     {
         private static Mat titleScreenTemplate = Cv2.ImRead("data/titleScreen.png");
         private static Mat wonderPickTemplate = Cv2.ImRead("data/wonderPick.png");

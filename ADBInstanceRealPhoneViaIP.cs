@@ -24,25 +24,29 @@ namespace TCGPocketAutomation
             get => $"[{DateTime.Now}]\t{Name}\t{IP}:{Port}";
         }
 
-        protected override async Task ConnectToADBInstance()
+        protected override Task ConnectToADBInstanceAsync()
         {
-            await logger.Log($"{LogHeader} - ConnectToADBInstance Begin");
-            string resultConnect = adbClient.Connect(IP, Port);
-            if (resultConnect != $"connected to {IP}:{Port}" &&
-                resultConnect != $"already connected to {IP}:{Port}")
+            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {
-                throw new Exception(resultConnect);
+                string resultConnect = adbClient.Connect(IP, Port);
+                if (resultConnect != $"connected to {IP}:{Port}" &&
+                    resultConnect != $"already connected to {IP}:{Port}")
+                {
+                    throw new Exception(resultConnect);
+                }
+                deviceData = Utils.GetDeviceDataFrom(adbClient, $"{IP}:{Port}");
             }
-            deviceData = Utils.GetDeviceDataFrom(adbClient, $"{IP}:{Port}");
-            await logger.Log($"{LogHeader} - ConnectToADBInstance End");
+            return Task.CompletedTask;
         }
 
-        protected override async Task DisconnectFromADBInstance()
+        protected override Task DisconnectFromADBInstanceAsync()
         {
-            await logger.Log($"{LogHeader} - DisconnectFromADBInstance Begin");
-            deviceData = new DeviceData();
-            adbClient.Disconnect(IP, Port);
-            await logger.Log($"{LogHeader} - DisconnectFromADBInstance End");
+            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
+            {
+                deviceData = new DeviceData();
+                adbClient.Disconnect(IP, Port);
+            }
+            return Task.CompletedTask;
         }
     }
 }

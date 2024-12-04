@@ -31,29 +31,32 @@ namespace TCGPocketAutomation
             get => $"[{DateTime.Now}]\t{Name}\t{IP}:{Port}\t{BluestacksName}";
         }
 
-        protected override async Task ConnectToADBInstance()
+        protected override async Task ConnectToADBInstanceAsync()
         {
-            await logger.Log($"{LogHeader} - ConnectToADBInstance Begin");
-            Utils.ExecuteCmd($"HD-Player.exe --instance {BluestacksName} --cmd launchAppWithBsx --package jp.pokemon.pokemontcgp --source desktop_shortcut");
-            await Task.Delay(60_000, cancellationTokenSource.Token);
-            string resultConnect = adbClient.Connect(IP, Port);
-            if (resultConnect != $"connected to {IP}:{Port}" &&
-                resultConnect != $"already connected to {IP}:{Port}")
+            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {
-                throw new Exception(resultConnect);
+                Utils.ExecuteCmd($"HD-Player.exe --instance {BluestacksName} --cmd launchAppWithBsx --package jp.pokemon.pokemontcgp --source desktop_shortcut");
+                await Task.Delay(60_000, cancellationTokenSource.Token);
+                string resultConnect = adbClient.Connect(IP, Port);
+                if (resultConnect != $"connected to {IP}:{Port}" &&
+                    resultConnect != $"already connected to {IP}:{Port}")
+                {
+                    throw new Exception(resultConnect);
+                }
+                deviceData = Utils.GetDeviceDataFrom(adbClient, $"{IP}:{Port}");
+                await GoPastTileScreenAsync();
             }
-            deviceData = Utils.GetDeviceDataFrom(adbClient, $"{IP}:{Port}");
-            await GoPastTileScreen();
-            await logger.Log($"{LogHeader} - ConnectToADBInstance End");
         }
 
-        protected override async Task DisconnectFromADBInstance()
+        protected override Task DisconnectFromADBInstanceAsync()
         {
-            await logger.Log($"{LogHeader} - DisconnectFromADBInstance Begin");
-            deviceData = new DeviceData();
-            adbClient.Disconnect(IP, Port);
-            Utils.ExecuteCmd($"taskkill /fi \"WINDOWTITLE eq {Name}\" /IM \"HD-Player.exe\" /F");
-            await logger.Log($"{LogHeader} - DisconnectFromADBInstance End");
+            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
+            {
+                deviceData = new DeviceData();
+                adbClient.Disconnect(IP, Port);
+                Utils.ExecuteCmd($"taskkill /fi \"WINDOWTITLE eq {Name}\" /IM \"HD-Player.exe\" /F");
+            }
+            return Task.CompletedTask;
         }
     }
 }
