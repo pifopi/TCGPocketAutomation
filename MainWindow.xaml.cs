@@ -1,6 +1,4 @@
-﻿using AdvancedSharpAdbClient.Models;
-using AdvancedSharpAdbClient;
-using System.Collections.ObjectModel;
+﻿using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace TCGPocketAutomation
@@ -18,15 +16,7 @@ namespace TCGPocketAutomation
         {
             InitializeComponent();
 
-            if (!AdbServer.Instance.GetStatus().IsRunning)
-            {
-                AdbServer server = new AdbServer();
-                StartServerResult resultStartServer = server.StartServer("adb", false);
-                if (resultStartServer != StartServerResult.Started)
-                {
-                    throw new Exception("Can't start adb server, make sure you add adb.exe to your PATH");
-                }
-            }
+            Utils.StartADBServer();
 
             ADBInstancesBluestacks = new ObservableCollection<ADBInstanceBluestacks>
             {

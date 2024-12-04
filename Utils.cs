@@ -26,5 +26,18 @@ namespace TCGPocketAutomation
             }
             throw new Exception($"Could not find {key} in list of adb devices");
         }
+
+        public static void StartADBServer()
+        {
+            if (!AdbServer.Instance.GetStatus().IsRunning)
+            {
+                AdbServer server = new AdbServer();
+                StartServerResult resultStartServer = server.StartServer("adb", false);
+                if (resultStartServer != StartServerResult.Started)
+                {
+                    throw new Exception("Can't start adb server, make sure you add adb.exe to your PATH");
+                }
+            }
+        }
     }
 }
