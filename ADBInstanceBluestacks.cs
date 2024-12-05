@@ -8,6 +8,8 @@ namespace TCGPocketAutomation
         private int _port = 5555;
         private string _bluestacksName = "Pie64";
 
+        private static SemaphoreSlim semaphore = new SemaphoreSlim(0, 1);
+
         public string IP
         {
             get => _ip;
@@ -31,20 +33,38 @@ namespace TCGPocketAutomation
             get => $"[{DateTime.Now}]\t{Name}\t{IP}:{Port}\t{BluestacksName}";
         }
 
+        public static void SetMaxParallelInstance(int maxParallelInstance)
+        {
+            semaphore = new SemaphoreSlim(maxParallelInstance, maxParallelInstance);
+        }
+
         protected override async Task ConnectToADBInstanceAsync()
         {
-            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
+            Logger.Log(Logger.LogLevel.Info, LogHeader, $"Waiting for a semaphore ({semaphore.CurrentCount} available)");
+            await semaphore.WaitAsync(cancellationTokenSource.Token);
+            Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({semaphore.CurrentCount} available)");
+
+            try
             {
-                Utils.ExecuteCmd($"HD-Player.exe --instance {BluestacksName} --cmd launchAppWithBsx --package jp.pokemon.pokemontcgp --source desktop_shortcut");
-                await Task.Delay(60_000, cancellationTokenSource.Token);
-                string resultConnect = adbClient.Connect(IP, Port);
-                if (resultConnect != $"connected to {IP}:{Port}" &&
-                    resultConnect != $"already connected to {IP}:{Port}")
+                using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
                 {
-                    throw new Exception(resultConnect);
+                    Utils.ExecuteCmd($"HD-Player.exe --instance {BluestacksName} --cmd launchAppWithBsx --package jp.pokemon.pokemontcgp --source desktop_shortcut");
+                    await Task.Delay(60_000, cancellationTokenSource.Token);
+                    string resultConnect = adbClient.Connect(IP, Port);
+                    if (resultConnect != $"connected to {IP}:{Port}" &&
+                        resultConnect != $"already connected to {IP}:{Port}")
+                    {
+                        throw new Exception(resultConnect);
+                    }
+                    deviceData = Utils.GetDeviceDataFrom(adbClient, $"{IP}:{Port}");
+                    await GoPastTileScreenAsync();
                 }
-                deviceData = Utils.GetDeviceDataFrom(adbClient, $"{IP}:{Port}");
-                await GoPastTileScreenAsync();
+            }
+            catch (Exception exception)
+            {
+                Logger.Log(Logger.LogLevel.Warning, LogHeader, $"<@282197676982927375> An exception has been raised:{exception}");
+                await DisconnectFromADBInstanceAsync();
+                throw;
             }
         }
 
@@ -56,6 +76,10 @@ namespace TCGPocketAutomation
                 adbClient.Disconnect(IP, Port);
                 Utils.ExecuteCmd($"taskkill /fi \"WINDOWTITLE eq {Name}\" /IM \"HD-Player.exe\" /F");
             }
+
+            Logger.Log(Logger.LogLevel.Info, LogHeader, $"Releasing a semaphore ({semaphore.CurrentCount} available)");
+            semaphore.Release();
+
             return Task.CompletedTask;
         }
     }

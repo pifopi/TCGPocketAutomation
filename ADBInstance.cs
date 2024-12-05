@@ -229,6 +229,7 @@ namespace TCGPocketAutomation
                     {
                         Logger.Log(Logger.LogLevel.Warning, LogHeader, $"<@282197676982927375> An exception has been raised:{exception}");
                     }
+                    await DisconnectFromADBInstanceAsync();
                 }
             }
         }

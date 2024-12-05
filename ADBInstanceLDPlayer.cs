@@ -6,6 +6,8 @@ namespace TCGPocketAutomation
     {
         private string _adbName = "emulator-5555";
 
+        private static SemaphoreSlim semaphore = new SemaphoreSlim(0, 1);
+
         public string ADBName
         {
             get => _adbName;
@@ -22,14 +24,32 @@ namespace TCGPocketAutomation
             get => $"\"{Name}\"";
         }
 
+        public static void SetMaxParallelInstance(int maxParallelInstance)
+        {
+            semaphore = new SemaphoreSlim(maxParallelInstance, maxParallelInstance);
+        }
+
         protected override async Task ConnectToADBInstanceAsync()
         {
-            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
+            Logger.Log(Logger.LogLevel.Info, LogHeader, $"Waiting for a semaphore ({semaphore.CurrentCount} available)");
+            await semaphore.WaitAsync(cancellationTokenSource.Token);
+            Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({semaphore.CurrentCount} available)");
+
+            try
             {
-                Utils.ExecuteCmd($"ldconsole.exe launchex --name {LDPlayerName} --packagename jp.pokemon.pokemontcgp");
-                await Task.Delay(60_000, cancellationTokenSource.Token);
-                deviceData = Utils.GetDeviceDataFrom(adbClient, $"{ADBName}");
-                await GoPastTileScreenAsync();
+                using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
+                {
+                    Utils.ExecuteCmd($"ldconsole.exe launchex --name {LDPlayerName} --packagename jp.pokemon.pokemontcgp");
+                    await Task.Delay(60_000, cancellationTokenSource.Token);
+                    deviceData = Utils.GetDeviceDataFrom(adbClient, $"{ADBName}");
+                    await GoPastTileScreenAsync();
+                }
+            }
+            catch (Exception exception)
+            {
+                Logger.Log(Logger.LogLevel.Warning, LogHeader, $"<@282197676982927375> An exception has been raised:{exception}");
+                await DisconnectFromADBInstanceAsync();
+                throw;
             }
         }
 
@@ -40,6 +60,10 @@ namespace TCGPocketAutomation
                 deviceData = new DeviceData();
                 Utils.ExecuteCmd($"ldconsole.exe quit --name {LDPlayerName}");
             }
+
+            Logger.Log(Logger.LogLevel.Info, LogHeader, $"Releasing a semaphore ({semaphore.CurrentCount} available)");
+            semaphore.Release();
+
             return Task.CompletedTask;
         }
     }

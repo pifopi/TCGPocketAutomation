@@ -24,19 +24,25 @@ namespace TCGPocketAutomation
             get => $"[{DateTime.Now}]\t{Name}\t{IP}:{Port}";
         }
 
-        protected override Task ConnectToADBInstanceAsync()
+        protected override async Task ConnectToADBInstanceAsync()
         {
-            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
+            try
             {
-                string resultConnect = adbClient.Connect(IP, Port);
-                if (resultConnect != $"connected to {IP}:{Port}" &&
-                    resultConnect != $"already connected to {IP}:{Port}")
+                using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
                 {
-                    throw new Exception(resultConnect);
+                    string resultConnect = adbClient.Connect(IP, Port);
+                    if (resultConnect != $"connected to {IP}:{Port}" &&
+                        resultConnect != $"already connected to {IP}:{Port}")
+                    {
+                        throw new Exception(resultConnect);
+                    }
+                    deviceData = Utils.GetDeviceDataFrom(adbClient, $"{IP}:{Port}");
                 }
-                deviceData = Utils.GetDeviceDataFrom(adbClient, $"{IP}:{Port}");
             }
-            return Task.CompletedTask;
+            catch
+            {
+                await DisconnectFromADBInstanceAsync();
+            }
         }
 
         protected override Task DisconnectFromADBInstanceAsync()

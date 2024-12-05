@@ -5,7 +5,9 @@ namespace TCGPocketAutomation
 {
     public class ADBSettings
     {
+        public int BluestacksMaxParallelInstance { get; set; } = new();
         public List<BluestacksSettings> BluestacksInstances { get; set; } = new();
+        public int LDPlayerMaxParallelInstance { get; set; } = new();
         public List<LDPlayerSettings> LDPlayerInstances { get; set; } = new();
         public List<RealPhoneSettings> RealPhoneInstances { get; set; } = new();
     }

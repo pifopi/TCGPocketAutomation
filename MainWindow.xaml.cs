@@ -22,6 +22,7 @@ namespace TCGPocketAutomation
 
             ADBSettings settings = SettingsManager.LoadSettings();
 
+            ADBInstanceBluestacks.SetMaxParallelInstance(settings.BluestacksMaxParallelInstance);
             ADBInstancesBluestacks = new ObservableCollection<ADBInstanceBluestacks>(
                 settings.BluestacksInstances.Select(s => new ADBInstanceBluestacks
                 {
@@ -31,6 +32,7 @@ namespace TCGPocketAutomation
                     Port = s.Port
                 }));
 
+            ADBInstanceLDPlayer.SetMaxParallelInstance(settings.LDPlayerMaxParallelInstance);
             ADBInstancesLDPlayer = new ObservableCollection<ADBInstanceLDPlayer>(
                 settings.LDPlayerInstances.Select(s => new ADBInstanceLDPlayer
                 {
