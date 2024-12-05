@@ -10,6 +10,8 @@ namespace TCGPocketAutomation
 
         private static SemaphoreSlim semaphore = new SemaphoreSlim(0, 1);
 
+        private Timer timer;
+
         public string IP
         {
             get => _ip;
@@ -44,6 +46,8 @@ namespace TCGPocketAutomation
             await semaphore.WaitAsync(cancellationTokenSource.Token);
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({semaphore.CurrentCount} available)");
 
+            timer = new Timer(async state => { await DisconnectFromADBInstanceAsync(); }, null, (int)TimeSpan.FromMinutes(5).TotalMilliseconds, Timeout.Infinite);
+
             try
             {
                 using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
@@ -72,6 +76,7 @@ namespace TCGPocketAutomation
         {
             using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {
+                timer.Dispose();
                 deviceData = new DeviceData();
                 adbClient.Disconnect(IP, Port);
                 Utils.ExecuteCmd($"taskkill /fi \"WINDOWTITLE eq {Name}\" /IM \"HD-Player.exe\" /F");
