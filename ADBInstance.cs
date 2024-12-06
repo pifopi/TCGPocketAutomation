@@ -218,6 +218,10 @@ namespace TCGPocketAutomation
             {
                 try
                 {
+                    if (Status == StatusEnum.NotRunning)
+                    {
+                        return;
+                    }
                     await ConnectToADBInstanceAsync();
                     await CheckWonderPickOnceAsync();
                     await DisconnectFromADBInstanceAsync();
