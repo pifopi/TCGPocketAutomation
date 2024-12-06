@@ -69,7 +69,7 @@ namespace TCGPocketAutomation
 
         public void StopProgram()
         {
-            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader, ""))
+            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {
                 cancellationTokenSource.Cancel();
                 cancellationTokenSource = new CancellationTokenSource();
