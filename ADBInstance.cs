@@ -237,10 +237,24 @@ namespace TCGPocketAutomation
         public async Task StartCheckWonderPickOnceAsync()
         {
             StartProgram(StatusEnum.CheckWonderPickOnce, "CheckWonderPickOnce");
-            await ConnectToADBInstanceAsync();
-            await CheckWonderPickOnceAsync();
-            await DisconnectFromADBInstanceAsync();
-            StopProgram();
+            try
+            {
+                await ConnectToADBInstanceAsync();
+                await CheckWonderPickOnceAsync();
+                await DisconnectFromADBInstanceAsync();
+            }
+            catch (Exception exception)
+            {
+                if (exception is not TaskCanceledException && exception is not OperationCanceledException)
+                {
+                    Logger.Log(Logger.LogLevel.Warning, LogHeader, $"<@282197676982927375> An exception has been raised:{exception}");
+                }
+                await DisconnectFromADBInstanceAsync();
+            }
+            finally
+            {
+                StopProgram();
+            }
         }
     }
 }
