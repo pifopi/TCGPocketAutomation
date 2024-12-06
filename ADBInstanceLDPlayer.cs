@@ -43,6 +43,7 @@ namespace TCGPocketAutomation
             {
                 Logger.Log(Logger.LogLevel.Warning, LogHeader, "Cancelling everything because 5 minutes has passed without releasing the holded semaphore");
                 cancellationTokenSource.Cancel();
+                cancellationTokenSource = new CancellationTokenSource();
             }, null, (int)TimeSpan.FromMinutes(5).TotalMilliseconds, Timeout.Infinite);
 
             using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
