@@ -74,6 +74,11 @@ namespace TCGPocketAutomation
 
         protected override Task DisconnectFromADBInstanceAsync()
         {
+            if (timer == null)
+            {
+                return Task.CompletedTask;
+            }
+
             using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {
                 timer.Dispose();
