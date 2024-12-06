@@ -24,7 +24,7 @@ namespace TCGPocketAutomation
                 framebuffer.Header.Blue.Offset != 16 ||
                 framebuffer.Header.Alpha.Offset != 24)
             {
-                throw new Exception("The screenshot color are not encoded in the expected way");
+                throw new Exception($"The screenshot color are not encoded in the expected way framebuffer:{framebuffer}");
             }
 
             int height = (int)framebuffer.Header.Height;
