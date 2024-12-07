@@ -225,7 +225,7 @@ namespace TCGPocketAutomation
                     await ConnectToADBInstanceAsync();
                     await CheckWonderPickOnceAsync();
                     await DisconnectFromADBInstanceAsync();
-                    await Task.Delay(10 * 60 * 1_000, cancellationTokenSource.Token);
+                    await Task.Delay(15 * 60 * 1_000, cancellationTokenSource.Token);
                 }
                 catch (Exception exception)
                 {
