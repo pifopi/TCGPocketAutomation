@@ -67,6 +67,7 @@ namespace TCGPocketAutomation
                 }
                 deviceData = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}");
                 await GoPastTileScreenAsync();
+                await ReturnToMainMenuAsync();
             }
         }
 

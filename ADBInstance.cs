@@ -181,7 +181,7 @@ namespace TCGPocketAutomation
             }
         }
 
-        private async Task ReturnToMainMenuAsync()
+        protected async Task ReturnToMainMenuAsync()
         {
             using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {
