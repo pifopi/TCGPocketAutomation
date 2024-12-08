@@ -26,7 +26,7 @@ namespace TCGPocketAutomation
             get => $"{Name}\t{IP}:{Port}";
         }
 
-        protected override Task ConnectToADBInstanceAsync()
+        protected override async Task ConnectToADBInstanceAsync()
         {
             using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {
@@ -37,9 +37,8 @@ namespace TCGPocketAutomation
                     throw new Exception(resultConnect);
                 }
                 needToDisconnect = true;
-                deviceData = Utils.GetDeviceDataFrom(adbClient, $"{IP}:{Port}");
+                deviceData = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}");
             }
-            return Task.CompletedTask;
         }
 
         protected override Task DisconnectFromADBInstanceAsync()

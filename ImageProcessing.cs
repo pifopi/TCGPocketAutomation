@@ -1,94 +1,63 @@
-﻿//#define SAVE_IMAGE
-
-using AdvancedSharpAdbClient.Models;
-using OpenCvSharp;
-
-namespace TCGPocketAutomation
+﻿namespace TCGPocketAutomation
 {
     public static class ImageProcessing
     {
-        private static Mat titleScreenTemplate = Cv2.ImRead("data/titleScreen.png");
-        private static Mat wonderPickTemplate = Cv2.ImRead("data/wonderPick.png");
-        private static Mat bonusWonderPickTemplate = Cv2.ImRead("data/bonusWonderPick.png");
-        private static Mat OKTemplate = Cv2.ImRead("data/OK.png");
-        private static Mat cardTemplate = Cv2.ImRead("data/card.png");
+        private static OpenCvSharp.Mat titleScreenTemplate = OpenCvSharp.Cv2.ImRead("data/titleScreen.png");
+        private static OpenCvSharp.Mat whiteScreenTemplate = OpenCvSharp.Cv2.ImRead("data/whiteScreenTemplate.png");
+        private static OpenCvSharp.Mat wonderPickButtonTemplate = OpenCvSharp.Cv2.ImRead("data/wonderPickButton.png");
+        private static OpenCvSharp.Mat wonderPickMenuTemplate = OpenCvSharp.Cv2.ImRead("data/wonderPickMenuTemplate.png");
+        private static OpenCvSharp.Mat bonusWonderPickTemplate = OpenCvSharp.Cv2.ImRead("data/bonusWonderPick.png");
+        private static OpenCvSharp.Mat OKTemplate = OpenCvSharp.Cv2.ImRead("data/OK.png");
+        private static OpenCvSharp.Mat cardTemplate = OpenCvSharp.Cv2.ImRead("data/card.png");
 
-        private static Mat AsImage(Framebuffer framebuffer)
-        {
-            if (framebuffer.Header.Red.Length != 8 ||
-                framebuffer.Header.Green.Length != 8 ||
-                framebuffer.Header.Blue.Length != 8 ||
-                framebuffer.Header.Alpha.Length != 8 ||
-                framebuffer.Header.Red.Offset != 0 ||
-                framebuffer.Header.Green.Offset != 8 ||
-                framebuffer.Header.Blue.Offset != 16 ||
-                framebuffer.Header.Alpha.Offset != 24)
-            {
-                throw new Exception($"The screenshot color are not encoded in the expected way framebuffer:{framebuffer}");
-            }
-
-            int height = (int)framebuffer.Header.Height;
-            int width = (int)framebuffer.Header.Width;
-            Mat mat = new Mat(height, width, MatType.CV_8UC3);
-
-            for (int y = 0; y < height; y++)
-            {
-                for (int x = 0; x < width; x++)
-                {
-                    int sourceIndex = (y * width + x) * 4;
-
-                    byte red = framebuffer.Data[sourceIndex + 0];
-                    byte green = framebuffer.Data[sourceIndex + 1];
-                    byte blue = framebuffer.Data[sourceIndex + 2];
-
-                    mat.Set(y, x, new Vec3b(blue, green, red));
-                }
-            }
-#if SAVE_IMAGE
-            mat.SaveImage("AsImage.png");
-#endif
-            return mat;
-        }
-
-        private static (bool, double, System.Drawing.Point) Search(Mat screen, Mat template)
+        private static (double, System.Drawing.Point)? Search(OpenCvSharp.Mat screen, OpenCvSharp.Mat template)
         {
             double ratio = screen.Width / 540;
-            screen = screen.Resize(new Size { Width = 540, Height = (int)(screen.Height / ratio) }); ;
+            screen = screen.Resize(new OpenCvSharp.Size { Width = 540, Height = (int)(screen.Height / ratio) }); ;
 
-            Mat result = screen.MatchTemplate(template, TemplateMatchModes.CCoeffNormed);
-            Cv2.MinMaxLoc(result, out double minVal, out double maxVal, out Point minLoc, out Point maxLoc);
+            OpenCvSharp.Mat result = screen.MatchTemplate(template, OpenCvSharp.TemplateMatchModes.CCoeffNormed);
+            OpenCvSharp.Cv2.MinMaxLoc(result, out double minVal, out double maxVal, out OpenCvSharp.Point minLoc, out OpenCvSharp.Point maxLoc);
 
-#if SAVE_IMAGE
-            Rect matchRect = new Rect(maxLoc, new Size(template.Width, template.Height));
-            Cv2.Rectangle(screen, matchRect, Scalar.Red, 2);
-            screen.SaveImage("Search.png");
-#endif
-            return (maxVal > 0.8, maxVal, new System.Drawing.Point((int)((maxLoc.X + template.Width / 2) * ratio), (int)((maxLoc.Y + template.Height / 2) * ratio)));
+            if (maxVal < 0.8)
+            {
+                return null;
+            }
+            return (maxVal, new System.Drawing.Point((int)((maxLoc.X + template.Width / 2) * ratio), (int)((maxLoc.Y + template.Height / 2) * ratio)));
         }
 
-        public static (bool, double, System.Drawing.Point) SearchTitleScreen(Framebuffer framebuffer)
+        public static (double, System.Drawing.Point)? SearchTitleScreen(OpenCvSharp.Mat image)
         {
-            return Search(AsImage(framebuffer), titleScreenTemplate);
+            return Search(image, titleScreenTemplate);
         }
 
-        public static (bool, double, System.Drawing.Point) SearchWonderPick(Framebuffer framebuffer)
+        public static (double, System.Drawing.Point)? SearchWhiteScreen(OpenCvSharp.Mat image)
         {
-            return Search(AsImage(framebuffer), wonderPickTemplate);
+            return Search(image, whiteScreenTemplate);
         }
 
-        public static (bool, double, System.Drawing.Point) SearchBonusWonderPick(Framebuffer framebuffer)
+        public static (double, System.Drawing.Point)? SearchWonderPickButton(OpenCvSharp.Mat image)
         {
-            return Search(AsImage(framebuffer), bonusWonderPickTemplate);
+            return Search(image, wonderPickButtonTemplate);
         }
 
-        public static (bool, double, System.Drawing.Point) SearchOK(Framebuffer framebuffer)
+        public static (double, System.Drawing.Point)? SearchWonderPickMenu(OpenCvSharp.Mat image)
         {
-            return Search(AsImage(framebuffer), OKTemplate);
+            return Search(image, wonderPickMenuTemplate);
         }
 
-        public static (bool, double, System.Drawing.Point) SearchCard(Framebuffer framebuffer)
+        public static (double, System.Drawing.Point)? SearchBonusWonderPick(OpenCvSharp.Mat image)
         {
-            return Search(AsImage(framebuffer), cardTemplate);
+            return Search(image, bonusWonderPickTemplate);
+        }
+
+        public static (double, System.Drawing.Point)? SearchOK(OpenCvSharp.Mat image)
+        {
+            return Search(image, OKTemplate);
+        }
+
+        public static (double, System.Drawing.Point)? SearchCard(OpenCvSharp.Mat image)
+        {
+            return Search(image, cardTemplate);
         }
     }
 }
