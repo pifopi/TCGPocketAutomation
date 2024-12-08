@@ -19,7 +19,7 @@ namespace TCGPocketAutomation
 
         protected override string LogHeader
         {
-            get => $"[{DateTime.Now}]\t{Name}\t{ADBName}";
+            get => $"{Name}\t{ADBName}";
         }
 
         private string LDPlayerName

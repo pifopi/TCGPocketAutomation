@@ -33,7 +33,7 @@ namespace TCGPocketAutomation
 
         protected override string LogHeader
         {
-            get => $"[{DateTime.Now}]\t{Name}\t{IP}:{Port}\t{BluestacksName}";
+            get => $"{Name}\t{IP}:{Port}\t{BluestacksName}";
         }
 
         public static void SetMaxParallelInstance(int maxParallelInstance)

@@ -23,7 +23,7 @@ namespace TCGPocketAutomation
 
         protected override string LogHeader
         {
-            get => $"[{DateTime.Now}]\t{Name}\t{IP}:{Port}";
+            get => $"{Name}\t{IP}:{Port}";
         }
 
         protected override Task ConnectToADBInstanceAsync()
