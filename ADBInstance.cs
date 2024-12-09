@@ -231,7 +231,7 @@ namespace TCGPocketAutomation
         public async Task StartCheckWonderPickPeriodicallyAsync()
         {
             StartProgram(StatusEnum.CheckWonderPickPeriodically, "CheckWonderPickPeriodically");
-            while (true)
+            while (!program.IsCancellationRequested)
             {
                 try
                 {
