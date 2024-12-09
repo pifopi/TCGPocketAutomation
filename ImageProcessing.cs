@@ -3,9 +3,9 @@
     public static class ImageProcessing
     {
         private static OpenCvSharp.Mat titleScreenTemplate = OpenCvSharp.Cv2.ImRead("data/titleScreen.png");
-        private static OpenCvSharp.Mat whiteScreenTemplate = OpenCvSharp.Cv2.ImRead("data/whiteScreenTemplate.png");
+        private static OpenCvSharp.Mat whiteScreenTemplate = OpenCvSharp.Cv2.ImRead("data/whiteScreen.png");
         private static OpenCvSharp.Mat wonderPickButtonTemplate = OpenCvSharp.Cv2.ImRead("data/wonderPickButton.png");
-        private static OpenCvSharp.Mat wonderPickMenuTemplate = OpenCvSharp.Cv2.ImRead("data/wonderPickMenuTemplate.png");
+        private static OpenCvSharp.Mat wonderPickMenuTemplate = OpenCvSharp.Cv2.ImRead("data/wonderPickMenu.png");
         private static OpenCvSharp.Mat bonusWonderPickTemplate = OpenCvSharp.Cv2.ImRead("data/bonusWonderPick.png");
         private static OpenCvSharp.Mat OKTemplate = OpenCvSharp.Cv2.ImRead("data/OK.png");
         private static OpenCvSharp.Mat cardTemplate = OpenCvSharp.Cv2.ImRead("data/card.png");
