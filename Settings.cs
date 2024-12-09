@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Text.Json;
 
 namespace TCGPocketAutomation
@@ -14,22 +14,22 @@ namespace TCGPocketAutomation
 
     public class BluestacksSettings
     {
-        public string Name { get; set; }
-        public string IP { get; set; }
+        public required string Name { get; set; }
+        public required string IP { get; set; }
         public int Port { get; set; }
-        public string BluestacksName { get; set; }
+        public required string BluestacksName { get; set; }
     }
 
     public class LDPlayerSettings
     {
-        public string Name { get; set; }
-        public string ADBName { get; set; }
+        public required string Name { get; set; }
+        public required string ADBName { get; set; }
     }
 
     public class RealPhoneSettings
     {
-        public string Name { get; set; }
-        public string IP { get; set; }
+        public required string Name { get; set; }
+        public required string IP { get; set; }
         public int Port { get; set; }
     }
 

@@ -1,4 +1,4 @@
-﻿using Discord;
+using Discord;
 using Discord.WebSocket;
 using NLog;
 using NLog.Targets;
@@ -76,8 +76,11 @@ namespace TCGPocketAutomation
                     client.Ready += SendWaitingMessagesAsync;
                     break;
                 case LoginState.LoggedIn:
-                    IMessageChannel channel = await client.GetChannelAsync(1294233612727750721) as IMessageChannel;
-                    await channel.SendMessageAsync(logEvent.Message);
+                    IMessageChannel? channel = await client.GetChannelAsync(1294233612727750721) as IMessageChannel;
+                    if (channel != null)
+                    {
+                        await channel.SendMessageAsync(logEvent.Message);
+                    }
                     break;
             }
         }

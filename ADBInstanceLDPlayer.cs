@@ -1,4 +1,4 @@
-﻿using AdvancedSharpAdbClient.Models;
+using AdvancedSharpAdbClient.Models;
 using System.Windows.Input;
 
 namespace TCGPocketAutomation
@@ -9,7 +9,7 @@ namespace TCGPocketAutomation
 
         private static SemaphoreSlim semaphore = new SemaphoreSlim(0, 1);
 
-        private Timer timer;
+        private Timer? timer;
         private bool semaphoreToRelease = false;
 
         public string ADBName
@@ -76,7 +76,10 @@ namespace TCGPocketAutomation
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"One semaphore to release ({semaphore.CurrentCount} available)");
             semaphoreToRelease = false;
 
-            timer.Dispose();
+            if (timer != null)
+            {
+                timer.Dispose();
+            }
 
             using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {

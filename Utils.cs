@@ -1,4 +1,4 @@
-﻿using AdvancedSharpAdbClient;
+using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.Models;
 using System.Diagnostics;
 
@@ -65,6 +65,10 @@ namespace TCGPocketAutomation
                 {
                     int sourceIndex = (y * width + x) * 4;
 
+                    if (framebuffer.Data == null)
+                    {
+                        throw new Exception($"The screenshot data buffer is null framebuffer:{framebuffer}");
+                    }
                     byte red = framebuffer.Data[sourceIndex + 0];
                     byte green = framebuffer.Data[sourceIndex + 1];
                     byte blue = framebuffer.Data[sourceIndex + 2];
