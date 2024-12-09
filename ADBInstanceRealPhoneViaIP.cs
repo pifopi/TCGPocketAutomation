@@ -39,6 +39,7 @@ namespace TCGPocketAutomation
                 needToDisconnect = true;
                 DeviceData? device = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}");
                 deviceData = device.Value;
+                await Task.Delay(TimeSpan.FromSeconds(10), program.Token);
             }
         }
 

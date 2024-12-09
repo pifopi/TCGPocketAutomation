@@ -67,6 +67,8 @@ namespace TCGPocketAutomation
                 }
                 DeviceData? device = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}");
                 deviceData = device.Value;
+                await Task.Delay(TimeSpan.FromSeconds(20), program.Token);
+                await WaitForTileScreenAsync();
                 await GoPastTileScreenAsync();
                 await ReturnToMainMenuAsync();
             }

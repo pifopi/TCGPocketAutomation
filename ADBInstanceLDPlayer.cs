@@ -59,6 +59,8 @@ namespace TCGPocketAutomation
                         break;
                     }
                 }
+                await Task.Delay(TimeSpan.FromSeconds(20), program.Token);
+                await WaitForTileScreenAsync();
                 await GoPastTileScreenAsync();
                 await ReturnToMainMenuAsync();
             }

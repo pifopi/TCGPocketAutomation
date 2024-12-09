@@ -1,4 +1,4 @@
-using AdvancedSharpAdbClient;
+﻿using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.DeviceCommands;
 using AdvancedSharpAdbClient.Models;
 using System.ComponentModel;
@@ -80,6 +80,25 @@ namespace TCGPocketAutomation
         protected abstract Task ConnectToADBInstanceAsync();
 
         protected abstract Task DisconnectFromADBInstanceAsync();
+
+        protected async Task WaitForTileScreenAsync()
+        {
+            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
+            {
+                while (!program.IsCancellationRequested)
+                {
+                    OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
+                    var searchTitleScreenResult = ImageProcessing.SearchTitleScreen(image);
+                    if (searchTitleScreenResult.HasValue)
+                    {
+                        (double alpha, Point location) = searchTitleScreenResult.Value;
+                        Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found in location:{location} (alpha:{alpha})");
+                        return;
+                    }
+                    await Task.Delay(TimeSpan.FromMilliseconds(100), program.Token);
+                }
+            }
+        }
 
         protected async Task GoPastTileScreenAsync()
         {
