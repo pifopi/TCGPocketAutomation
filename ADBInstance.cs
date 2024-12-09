@@ -1,4 +1,4 @@
-﻿using AdvancedSharpAdbClient;
+using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.DeviceCommands;
 using AdvancedSharpAdbClient.Models;
 using System.ComponentModel;
@@ -185,7 +185,7 @@ namespace TCGPocketAutomation
         {
             using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {
-                while (true)
+                while (!program.IsCancellationRequested)
                 {
                     OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
                     var mainMenuResult = ImageProcessing.SearchWonderPickButton(image);
