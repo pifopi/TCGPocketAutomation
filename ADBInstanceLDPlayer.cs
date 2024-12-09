@@ -9,7 +9,6 @@ namespace TCGPocketAutomation
 
         private static SemaphoreSlim semaphore = new SemaphoreSlim(0, 1);
 
-        private Timer? timer;
         private bool semaphoreToRelease = false;
 
         public string ADBName
@@ -40,13 +39,6 @@ namespace TCGPocketAutomation
             semaphoreToRelease = true;
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({semaphore.CurrentCount} available)");
 
-            timer = new Timer(state =>
-            {
-                Logger.Log(Logger.LogLevel.Warning, LogHeader, "Cancelling everything because 5 minutes has passed without releasing the held semaphore");
-                program.Cancel();
-                program = new CancellationTokenSource();
-            }, null, (int)TimeSpan.FromMinutes(5).TotalMilliseconds, Timeout.Infinite);
-
             using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {
                 Utils.ExecuteCmd($"ldconsole.exe launchex --name {LDPlayerName} --packagename jp.pokemon.pokemontcgp");
@@ -75,11 +67,6 @@ namespace TCGPocketAutomation
             }
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"One semaphore to release ({semaphore.CurrentCount} available)");
             semaphoreToRelease = false;
-
-            if (timer != null)
-            {
-                timer.Dispose();
-            }
 
             using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {
