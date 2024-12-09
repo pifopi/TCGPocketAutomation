@@ -9,6 +9,7 @@
         private static OpenCvSharp.Mat bonusWonderPickTemplate = OpenCvSharp.Cv2.ImRead("data/bonusWonderPick.png");
         private static OpenCvSharp.Mat OKTemplate = OpenCvSharp.Cv2.ImRead("data/OK.png");
         private static OpenCvSharp.Mat cardTemplate = OpenCvSharp.Cv2.ImRead("data/card.png");
+        private static OpenCvSharp.Mat registerNewCardTemplate = OpenCvSharp.Cv2.ImRead("data/registerNewCard.png");
 
         private static (double, System.Drawing.Point)? Search(OpenCvSharp.Mat screen, OpenCvSharp.Mat template)
         {
@@ -58,6 +59,11 @@
         public static (double, System.Drawing.Point)? SearchCard(OpenCvSharp.Mat image)
         {
             return Search(image, cardTemplate);
+        }
+
+        public static (double, System.Drawing.Point)? SearchRegisterNewCard(OpenCvSharp.Mat image)
+        {
+            return Search(image, registerNewCardTemplate);
         }
     }
 }

@@ -1,4 +1,4 @@
-using AdvancedSharpAdbClient.Models;
+﻿using AdvancedSharpAdbClient.Models;
 
 namespace TCGPocketAutomation
 {

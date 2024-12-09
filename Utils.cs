@@ -1,4 +1,4 @@
-using AdvancedSharpAdbClient;
+﻿using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.Models;
 using System.Diagnostics;
 

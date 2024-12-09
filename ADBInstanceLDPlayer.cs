@@ -1,4 +1,4 @@
-using AdvancedSharpAdbClient.Models;
+﻿using AdvancedSharpAdbClient.Models;
 using System.Windows.Input;
 
 namespace TCGPocketAutomation

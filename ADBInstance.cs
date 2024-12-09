@@ -1,4 +1,4 @@
-using AdvancedSharpAdbClient;
+﻿using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.DeviceCommands;
 using AdvancedSharpAdbClient.Models;
 using System.ComponentModel;
@@ -214,6 +214,16 @@ namespace TCGPocketAutomation
                         Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found wonder pick in location:{location} ({alpha})");
                         await Task.Delay(TimeSpan.FromSeconds(10), program.Token);
                         break;
+                    }
+
+                    var registernewCardResult = ImageProcessing.SearchRegisterNewCard(image);
+                    if (registernewCardResult.HasValue)
+                    {
+                        (double alpha, Point location) = registernewCardResult.Value;
+                        Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location} ({alpha})");
+                        await adbClient.ClickAsync(deviceData, location);
+                        await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
+
                     }
 
                     Logger.Log(Logger.LogLevel.Debug, LogHeader, "Going back");

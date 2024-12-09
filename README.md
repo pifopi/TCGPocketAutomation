@@ -4,9 +4,6 @@ Those are simple scripts to automate pokemon TCG pocket over adb and using open 
 
 # TODO list
 - await on other thread
-- handle new card in ReturnToMainMenuAsync
-- fix compilation warnings
-- reduce wait time
 - make discord messages prettier
 - make discord channel + ping as settings
 - make a setup guide

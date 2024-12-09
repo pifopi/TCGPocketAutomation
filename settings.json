@@ -62,47 +62,47 @@
       "BluestacksName": "Pie64_10"
     }
   ],
-  "LDPlayerMaxParallelInstance": 4,
+  "LDPlayerMaxParallelInstance": 5,
   "LDPlayerInstances": [
     {
-      "Name": "Compte 02 - Mewtwo",
-      "ADBName": "emulator-5554"
-    },
-    {
-      "Name": "Compte 03 - Mewtwo",
-      "ADBName": "emulator-5556"
-    },
-    {
-      "Name": "Compte 04 - Mewtwo",
+      "Name": "Compte 01",
       "ADBName": "emulator-5558"
     },
     {
-      "Name": "Compte 05 - Pikachu",
+      "Name": "Compte 02 - Mewtwo",
+      "ADBName": "emulator-5556"
+    },
+    {
+      "Name": "Compte 03 - Mewtwo",
       "ADBName": "emulator-5560"
     },
     {
-      "Name": "Compte 06 - Pikachu",
-      "ADBName": "emulator-5562"
-    },
-    {
-      "Name": "Compte 07 - Pikachu",
+      "Name": "Compte 04 - Mewtwo",
       "ADBName": "emulator-5564"
     },
     {
-      "Name": "Compte 08 - Dracaufeu",
+      "Name": "Compte 05 - Pikachu",
       "ADBName": "emulator-5566"
     },
     {
-      "Name": "Compte 09 - Dracaufeu",
+      "Name": "Compte 06 - Pikachu",
       "ADBName": "emulator-5568"
     },
     {
-      "Name": "Compte 10 - Dracaufeu",
+      "Name": "Compte 07 - Pikachu",
       "ADBName": "emulator-5570"
     },
     {
-      "Name": "Compte 01",
+      "Name": "Compte 08 - Dracaufeu",
       "ADBName": "emulator-5572"
+    },
+    {
+      "Name": "Compte 09 - Dracaufeu",
+      "ADBName": "emulator-5574"
+    },
+    {
+      "Name": "Compte 10 - Dracaufeu",
+      "ADBName": "emulator-5576"
     }
   ],
   "RealPhoneInstances": [
