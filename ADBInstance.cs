@@ -212,7 +212,7 @@ namespace TCGPocketAutomation
 
                 await Task.Delay(TimeSpan.FromSeconds(30), program.Token);
                 OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
-                var bonusWonderPickResult = ImageProcessing.SearchWonderPickButton(image);
+                var bonusWonderPickResult = ImageProcessing.SearchBonusWonderPick(image);
                 if (bonusWonderPickResult.HasValue)
                 {
                     (double alpha, Point location) = bonusWonderPickResult.Value;
