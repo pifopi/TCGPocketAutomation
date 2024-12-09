@@ -50,18 +50,15 @@ namespace TCGPocketAutomation
             using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
             {
                 Utils.ExecuteCmd($"ldconsole.exe launchex --name {LDPlayerName} --packagename jp.pokemon.pokemontcgp");
-                while (!program.Token.IsCancellationRequested)
+                while (!program.IsCancellationRequested)
                 {
-                    foreach(DeviceData device in await adbClient.GetDevicesAsync())
+                    DeviceData? device = await Utils.GetDeviceDataFromAsync(adbClient, ADBName);
+                    if (device.HasValue)
                     {
-                        if (device.Serial == ADBName)
-                        {
-                            break;
-                        }
+                        deviceData = device.Value;
+                        break;
                     }
-                    await Task.Delay(TimeSpan.FromMilliseconds(100), program.Token);
                 }
-                deviceData = await Utils.GetDeviceDataFromAsync(adbClient, ADBName);
                 await GoPastTileScreenAsync();
                 await ReturnToMainMenuAsync();
             }

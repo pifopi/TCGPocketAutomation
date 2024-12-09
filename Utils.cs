@@ -15,7 +15,7 @@ namespace TCGPocketAutomation
             process.Start();
         }
 
-        public static async Task<DeviceData> GetDeviceDataFromAsync(AdbClient adbClient, string key)
+        public static async Task<DeviceData?> GetDeviceDataFromAsync(AdbClient adbClient, string key)
         {
             foreach (DeviceData device in await adbClient.GetDevicesAsync())
             {
@@ -24,7 +24,7 @@ namespace TCGPocketAutomation
                     return device;
                 }
             }
-            throw new Exception($"Could not find {key} in list of adb devices");
+            return null;
         }
 
         public static void StartADBServer()
