@@ -3,6 +3,7 @@
 Those are simple scripts to automate pokemon TCG pocket over adb and using open cv for template matching + discord message for logging what happened
 
 # TODO list
+- await on other thread
 - handle new card in ReturnToMainMenuAsync
 - fix compilation warnings
 - reduce wait time
