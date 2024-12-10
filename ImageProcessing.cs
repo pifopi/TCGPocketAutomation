@@ -17,7 +17,7 @@
             screen = screen.Resize(new OpenCvSharp.Size { Width = 540, Height = (int)(screen.Height / ratio) }); ;
 
             OpenCvSharp.Mat result = screen.MatchTemplate(template, OpenCvSharp.TemplateMatchModes.CCoeffNormed);
-            OpenCvSharp.Cv2.MinMaxLoc(result, out double minVal, out double maxVal, out OpenCvSharp.Point minLoc, out OpenCvSharp.Point maxLoc);
+            OpenCvSharp.Cv2.MinMaxLoc(result, out _, out double maxVal, out _, out OpenCvSharp.Point maxLoc);
 
             if (maxVal < 0.8)
             {

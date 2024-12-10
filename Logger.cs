@@ -15,7 +15,7 @@ namespace TCGPocketAutomation
             Debug
         }
 
-        private static readonly NLog.Logger logger = NLog.LogManager.GetLogger("");
+        private static readonly NLog.Logger logger = LogManager.GetLogger("");
 
         public static void Log(LogLevel logLevel, string header, string message, [CallerMemberName] string methodName = "")
         {
