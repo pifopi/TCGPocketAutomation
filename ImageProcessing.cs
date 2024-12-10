@@ -2,14 +2,14 @@
 {
     public static class ImageProcessing
     {
-        private static OpenCvSharp.Mat titleScreenTemplate = OpenCvSharp.Cv2.ImRead("data/titleScreen.png");
-        private static OpenCvSharp.Mat whiteScreenTemplate = OpenCvSharp.Cv2.ImRead("data/whiteScreen.png");
-        private static OpenCvSharp.Mat wonderPickButtonTemplate = OpenCvSharp.Cv2.ImRead("data/wonderPickButton.png");
-        private static OpenCvSharp.Mat wonderPickMenuTemplate = OpenCvSharp.Cv2.ImRead("data/wonderPickMenu.png");
-        private static OpenCvSharp.Mat bonusWonderPickTemplate = OpenCvSharp.Cv2.ImRead("data/bonusWonderPick.png");
-        private static OpenCvSharp.Mat OKTemplate = OpenCvSharp.Cv2.ImRead("data/OK.png");
-        private static OpenCvSharp.Mat cardTemplate = OpenCvSharp.Cv2.ImRead("data/card.png");
-        private static OpenCvSharp.Mat registerNewCardTemplate = OpenCvSharp.Cv2.ImRead("data/registerNewCard.png");
+        private static readonly OpenCvSharp.Mat titleScreenTemplate = OpenCvSharp.Cv2.ImRead("data/titleScreen.png");
+        private static readonly OpenCvSharp.Mat whiteScreenTemplate = OpenCvSharp.Cv2.ImRead("data/whiteScreen.png");
+        private static readonly OpenCvSharp.Mat wonderPickButtonTemplate = OpenCvSharp.Cv2.ImRead("data/wonderPickButton.png");
+        private static readonly OpenCvSharp.Mat wonderPickMenuTemplate = OpenCvSharp.Cv2.ImRead("data/wonderPickMenu.png");
+        private static readonly OpenCvSharp.Mat bonusWonderPickTemplate = OpenCvSharp.Cv2.ImRead("data/bonusWonderPick.png");
+        private static readonly OpenCvSharp.Mat OKTemplate = OpenCvSharp.Cv2.ImRead("data/OK.png");
+        private static readonly OpenCvSharp.Mat cardTemplate = OpenCvSharp.Cv2.ImRead("data/card.png");
+        private static readonly OpenCvSharp.Mat registerNewCardTemplate = OpenCvSharp.Cv2.ImRead("data/registerNewCard.png");
 
         private static (double, System.Drawing.Point)? Search(OpenCvSharp.Mat screen, OpenCvSharp.Mat template)
         {

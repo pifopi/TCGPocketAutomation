@@ -3,7 +3,7 @@
 Those are simple scripts to automate pokemon TCG pocket over adb and using open cv for template matching + discord message for logging what happened
 
 # TODO list
-- await on other thread
+- review log level
 - make discord messages prettier
 - make discord channel + ping as settings
 - make a setup guide

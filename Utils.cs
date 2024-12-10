@@ -52,7 +52,7 @@ namespace TCGPocketAutomation
                 framebuffer.Header.Blue.Offset != 16 ||
                 framebuffer.Header.Alpha.Offset != 24)
             {
-                throw new Exception($"The screenshot color are not encoded in the expected way framebuffer:{framebuffer}");
+                throw new Exception($"The screenshot color are not encoded in the expected way (framebuffer:{framebuffer})");
             }
 
             int height = (int)framebuffer.Header.Height;
@@ -67,7 +67,7 @@ namespace TCGPocketAutomation
 
                     if (framebuffer.Data == null)
                     {
-                        throw new Exception($"The screenshot data buffer is null framebuffer:{framebuffer}");
+                        throw new Exception($"The screenshot data buffer is null (framebuffer:{framebuffer})");
                     }
                     byte red = framebuffer.Data[sourceIndex + 0];
                     byte green = framebuffer.Data[sourceIndex + 1];

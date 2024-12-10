@@ -14,12 +14,6 @@ namespace TCGPocketAutomation
 
         public MainWindow()
         {
-            Logger.Log(Logger.LogLevel.Info, "", "-------------------------------------------------------------------------");
-            Logger.Log(Logger.LogLevel.Info, "", "<@282197676982927375> Starting the program");
-            InitializeComponent();
-
-            Utils.StartADBServer();
-
             ADBSettings settings = SettingsManager.LoadSettings();
 
             ADBInstanceBluestacks.SetMaxParallelInstance(settings.BluestacksMaxParallelInstance);
@@ -48,6 +42,12 @@ namespace TCGPocketAutomation
                     Port = s.Port
                 }));
 
+            Logger.Log(Logger.LogLevel.Info, "", "-------------------------------------------------------------------------");
+            Logger.Log(Logger.LogLevel.Info, "", "<@282197676982927375> Starting the program");
+
+            Utils.StartADBServer();
+
+            InitializeComponent();
             DataContext = this;
         }
 
@@ -68,12 +68,12 @@ namespace TCGPocketAutomation
 
         public async void CheckWonderPickPeriodically(object sender, RoutedEventArgs e)
         {
-            await AsADBInstance(sender).StartCheckWonderPickPeriodicallyAsync();
+            await AsADBInstance(sender).StartCheckWonderPickPeriodicallyAsync().ConfigureAwait(false);
         }
 
         public async void CheckWonderPickOnce(object sender, RoutedEventArgs e)
         {
-            await AsADBInstance(sender).StartCheckWonderPickOnceAsync();
+            await AsADBInstance(sender).StartCheckWonderPickOnceAsync().ConfigureAwait(false);
         }
     }
 }

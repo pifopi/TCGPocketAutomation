@@ -15,7 +15,7 @@ namespace TCGPocketAutomation
             Debug
         }
 
-        private static NLog.Logger logger = NLog.LogManager.GetLogger("");
+        private static readonly NLog.Logger logger = NLog.LogManager.GetLogger("");
 
         public static void Log(LogLevel logLevel, string header, string message, [CallerMemberName] string methodName = "")
         {
@@ -37,9 +37,9 @@ namespace TCGPocketAutomation
 
     public class LogContext : IDisposable
     {
-        Logger.LogLevel logLevel;
-        string header;
-        string methodName;
+        private readonly Logger.LogLevel logLevel;
+        private readonly string header;
+        private readonly string methodName;
 
         public LogContext(Logger.LogLevel logLevel, string header, [CallerMemberName] string methodName = "")
         {
@@ -58,8 +58,8 @@ namespace TCGPocketAutomation
     [Target("Discord")]
     public class DiscordLogger : AsyncTaskTarget
     {
-        private static DiscordSocketClient client = new DiscordSocketClient();
-        private static List<(LogEventInfo, CancellationToken)> waitingMessages = new List<(LogEventInfo, CancellationToken)>();
+        private static readonly DiscordSocketClient client = new DiscordSocketClient();
+        private static readonly List<(LogEventInfo, CancellationToken)> waitingMessages = new List<(LogEventInfo, CancellationToken)>();
 
         protected override async Task WriteAsyncTask(LogEventInfo logEvent, CancellationToken cancellationToken)
         {
