@@ -7,7 +7,7 @@ namespace TCGPocketAutomation
     {
         private string _adbName = "emulator-5555";
 
-        private static SemaphoreSlim semaphore = new SemaphoreSlim(0, 1);
+        private static SemaphoreSlim semaphore = new(0, 1);
 
         private bool semaphoreToRelease = false;
 
@@ -34,32 +34,31 @@ namespace TCGPocketAutomation
 
         protected override async Task ConnectToADBInstanceAsync()
         {
+            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Waiting for a semaphore ({semaphore.CurrentCount} available)");
             await semaphore.WaitAsync(program.Token);
             semaphoreToRelease = true;
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({semaphore.CurrentCount} available)");
 
-            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
+            Utils.ExecuteCmd($"ldconsole.exe launchex --name {LDPlayerName} --packagename jp.pokemon.pokemontcgp");
+            while (!program.IsCancellationRequested)
             {
-                Utils.ExecuteCmd($"ldconsole.exe launchex --name {LDPlayerName} --packagename jp.pokemon.pokemontcgp");
-                while (!program.IsCancellationRequested)
+                DeviceData? device = await Utils.GetDeviceDataFromAsync(adbClient, ADBName);
+                if (device.HasValue)
                 {
-                    DeviceData? device = await Utils.GetDeviceDataFromAsync(adbClient, ADBName);
-                    if (device.HasValue)
-                    {
-                        deviceData = device.Value;
-                        break;
-                    }
+                    deviceData = device.Value;
+                    break;
                 }
-                await Task.Delay(TimeSpan.FromSeconds(20), program.Token);
-                await WaitForTileScreenAsync();
-                await GoPastTileScreenAsync();
-                await ReturnToMainMenuAsync();
             }
+            await Task.Delay(TimeSpan.FromSeconds(20), program.Token);
+            await WaitForTileScreenAsync();
+            await GoPastTileScreenAsync();
+            await ReturnToMainMenuAsync();
         }
 
         protected override Task DisconnectFromADBInstanceAsync()
         {
+            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
             if (!semaphoreToRelease)
             {
                 Logger.Log(Logger.LogLevel.Info, LogHeader, $"No semaphore to release ({semaphore.CurrentCount} available)");
@@ -68,11 +67,8 @@ namespace TCGPocketAutomation
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"One semaphore to release ({semaphore.CurrentCount} available)");
             semaphoreToRelease = false;
 
-            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
-            {
-                deviceData = new DeviceData();
-                Utils.ExecuteCmd($"ldconsole.exe quit --name {LDPlayerName}");
-            }
+            deviceData = new DeviceData();
+            Utils.ExecuteCmd($"ldconsole.exe quit --name {LDPlayerName}");
 
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Releasing a semaphore ({semaphore.CurrentCount} available)");
             semaphore.Release();

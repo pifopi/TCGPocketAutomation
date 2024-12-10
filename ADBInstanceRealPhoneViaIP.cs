@@ -28,34 +28,31 @@ namespace TCGPocketAutomation
 
         protected override async Task ConnectToADBInstanceAsync()
         {
-            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
+            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            string resultConnect = adbClient.Connect(IP, Port);
+            if (resultConnect != $"connected to {IP}:{Port}" &&
+                resultConnect != $"already connected to {IP}:{Port}")
             {
-                string resultConnect = adbClient.Connect(IP, Port);
-                if (resultConnect != $"connected to {IP}:{Port}" &&
-                    resultConnect != $"already connected to {IP}:{Port}")
-                {
-                    throw new Exception(resultConnect);
-                }
-                needToDisconnect = true;
-                DeviceData? device = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}");
-                deviceData = device.Value;
-                await Task.Delay(TimeSpan.FromSeconds(10), program.Token);
+                throw new Exception(resultConnect);
             }
+            needToDisconnect = true;
+            DeviceData? device = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}");
+            deviceData = device.Value;
+            await Task.Delay(TimeSpan.FromSeconds(10), program.Token);
         }
 
         protected override Task DisconnectFromADBInstanceAsync()
         {
+            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
             if (!needToDisconnect)
             {
                 return Task.CompletedTask;
             }
             needToDisconnect = false;
 
-            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
-            {
-                deviceData = new DeviceData();
-                adbClient.Disconnect(IP, Port);
-            }
+            deviceData = new DeviceData();
+            adbClient.Disconnect(IP, Port);
+
             return Task.CompletedTask;
         }
     }

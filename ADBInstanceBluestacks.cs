@@ -8,7 +8,7 @@ namespace TCGPocketAutomation
         private int _port = 5555;
         private string _bluestacksName = "Pie64";
 
-        private static SemaphoreSlim semaphore = new SemaphoreSlim(0, 1);
+        private static SemaphoreSlim semaphore = new(0, 1);
 
         private bool semaphoreToRelease = false;
 
@@ -42,32 +42,32 @@ namespace TCGPocketAutomation
 
         protected override async Task ConnectToADBInstanceAsync()
         {
+            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Waiting for a semaphore ({semaphore.CurrentCount} available)");
             await semaphore.WaitAsync(program.Token);
             semaphoreToRelease = true;
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({semaphore.CurrentCount} available)");
 
-            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
+            Utils.ExecuteCmd($"HD-Player.exe --instance {BluestacksName} --cmd launchAppWithBsx --package jp.pokemon.pokemontcgp");
+            await Task.Delay(TimeSpan.FromMinutes(1), program.Token);
+            string resultConnect = adbClient.Connect(IP, Port);
+            if (resultConnect != $"connected to {IP}:{Port}" &&
+                resultConnect != $"already connected to {IP}:{Port}")
             {
-                Utils.ExecuteCmd($"HD-Player.exe --instance {BluestacksName} --cmd launchAppWithBsx --package jp.pokemon.pokemontcgp");
-                await Task.Delay(TimeSpan.FromMinutes(1), program.Token);
-                string resultConnect = adbClient.Connect(IP, Port);
-                if (resultConnect != $"connected to {IP}:{Port}" &&
-                    resultConnect != $"already connected to {IP}:{Port}")
-                {
-                    throw new Exception(resultConnect);
-                }
-                DeviceData? device = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}");
-                deviceData = device.Value;
-                await Task.Delay(TimeSpan.FromSeconds(20), program.Token);
-                await WaitForTileScreenAsync();
-                await GoPastTileScreenAsync();
-                await ReturnToMainMenuAsync();
+                throw new Exception(resultConnect);
             }
+            DeviceData? device = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}");
+            deviceData = device.Value;
+            await Task.Delay(TimeSpan.FromSeconds(20), program.Token);
+            await WaitForTileScreenAsync();
+            await GoPastTileScreenAsync();
+            await ReturnToMainMenuAsync();
         }
 
         protected override Task DisconnectFromADBInstanceAsync()
         {
+
+            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
             if (!semaphoreToRelease)
             {
                 Logger.Log(Logger.LogLevel.Info, LogHeader, $"No semaphore to release ({semaphore.CurrentCount} available)");
@@ -76,12 +76,9 @@ namespace TCGPocketAutomation
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"One semaphore to release ({semaphore.CurrentCount} available)");
             semaphoreToRelease = false;
 
-            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
-            {
-                deviceData = new DeviceData();
-                adbClient.Disconnect(IP, Port);
-                Utils.ExecuteCmd($"taskkill /fi \"WINDOWTITLE eq {Name}\" /IM \"HD-Player.exe\" /F");
-            }
+            deviceData = new DeviceData();
+            adbClient.Disconnect(IP, Port);
+            Utils.ExecuteCmd($"taskkill /fi \"WINDOWTITLE eq {Name}\" /IM \"HD-Player.exe\" /F");
 
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Releasing a semaphore ({semaphore.CurrentCount} available)");
             semaphore.Release();

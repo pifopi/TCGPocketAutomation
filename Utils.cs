@@ -8,10 +8,13 @@ namespace TCGPocketAutomation
     {
         public static void ExecuteCmd(string cmd)
         {
-            Process process = new Process();
-            ProcessStartInfo startInfo = new ProcessStartInfo("cmd.exe", $"/C {cmd}");
-            startInfo.WindowStyle = ProcessWindowStyle.Hidden;
-            process.StartInfo = startInfo;
+            Process process = new()
+            {
+                StartInfo = new("cmd.exe", $"/C {cmd}")
+                {
+                    WindowStyle = ProcessWindowStyle.Hidden
+                }
+            };
             process.Start();
         }
 
@@ -31,7 +34,7 @@ namespace TCGPocketAutomation
         {
             if (!AdbServer.Instance.GetStatus().IsRunning)
             {
-                AdbServer server = new AdbServer();
+                AdbServer server = new();
                 StartServerResult resultStartServer = server.StartServer("adb", false);
                 if (resultStartServer != StartServerResult.Started)
                 {
@@ -57,7 +60,7 @@ namespace TCGPocketAutomation
 
             int height = (int)framebuffer.Header.Height;
             int width = (int)framebuffer.Header.Width;
-            OpenCvSharp.Mat mat = new OpenCvSharp.Mat(height, width, OpenCvSharp.MatType.CV_8UC3);
+            OpenCvSharp.Mat mat = new(height, width, OpenCvSharp.MatType.CV_8UC3);
 
             for (int y = 0; y < height; y++)
             {

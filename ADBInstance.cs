@@ -19,10 +19,10 @@ namespace TCGPocketAutomation
         private string _name = "New instance";
         private StatusEnum _status = StatusEnum.NotRunning;
 
-        protected AdbClient adbClient = new AdbClient();
-        protected DeviceData deviceData = new DeviceData();
+        protected AdbClient adbClient = new();
+        protected DeviceData deviceData = new();
 
-        protected CancellationTokenSource program = new CancellationTokenSource();
+        protected CancellationTokenSource program = new();
 
         public string Name
         {
@@ -69,11 +69,9 @@ namespace TCGPocketAutomation
 
         public void StopProgram()
         {
-            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
-            {
-                program.Cancel();
-                program = new CancellationTokenSource();
-            }
+            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            program.Cancel();
+            program = new CancellationTokenSource();
             Status = StatusEnum.NotRunning;
         }
 
@@ -83,178 +81,165 @@ namespace TCGPocketAutomation
 
         protected async Task WaitForTileScreenAsync()
         {
-            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
+            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            while (!program.IsCancellationRequested)
             {
-                while (!program.IsCancellationRequested)
+                OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
+                var searchTitleScreenResult = ImageProcessing.SearchTitleScreen(image);
+                if (searchTitleScreenResult.HasValue)
                 {
-                    OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
-                    var searchTitleScreenResult = ImageProcessing.SearchTitleScreen(image);
-                    if (searchTitleScreenResult.HasValue)
-                    {
-                        (double alpha, Point location) = searchTitleScreenResult.Value;
-                        Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found in location:{location} (alpha:{alpha})");
-                        return;
-                    }
-                    await Task.Delay(TimeSpan.FromMilliseconds(100), program.Token);
+                    (double alpha, Point location) = searchTitleScreenResult.Value;
+                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found in location:{location} (alpha:{alpha})");
+                    return;
                 }
+                await Task.Delay(TimeSpan.FromMilliseconds(100), program.Token);
             }
         }
 
         protected async Task GoPastTileScreenAsync()
         {
-            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
+            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            while (!program.IsCancellationRequested)
             {
-                while (!program.IsCancellationRequested)
+                OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
+                var searchPastTitleScreenResult = ImageProcessing.SearchWhiteScreen(image);
+                if (searchPastTitleScreenResult.HasValue)
                 {
-                    OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
-                    var searchPastTitleScreenResult = ImageProcessing.SearchWhiteScreen(image);
-                    if (searchPastTitleScreenResult.HasValue)
-                    {
-                        (double alpha, Point location) = searchPastTitleScreenResult.Value;
-                        Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found in location:{location} (alpha:{alpha})");
-                        return;
-                    }
-
-                    var searchTitleScreenResult = ImageProcessing.SearchTitleScreen(image);
-                    if (searchTitleScreenResult.HasValue)
-                    {
-                        (double alpha, Point location) = searchTitleScreenResult.Value;
-                        Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
-                        await adbClient.ClickAsync(deviceData, location);
-                        await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
-                    }
-                    await Task.Delay(TimeSpan.FromMilliseconds(100), program.Token);
+                    (double alpha, Point location) = searchPastTitleScreenResult.Value;
+                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found in location:{location} (alpha:{alpha})");
+                    return;
                 }
+
+                var searchTitleScreenResult = ImageProcessing.SearchTitleScreen(image);
+                if (searchTitleScreenResult.HasValue)
+                {
+                    (double alpha, Point location) = searchTitleScreenResult.Value;
+                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
+                    await adbClient.ClickAsync(deviceData, location);
+                    await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
+                }
+                await Task.Delay(TimeSpan.FromMilliseconds(100), program.Token);
             }
         }
 
         private async Task OpenWonderPickMenuAsync()
         {
-            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
+            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            while (!program.IsCancellationRequested)
             {
-                while (!program.IsCancellationRequested)
+                OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
+                var searchWonderPickMenuResult = ImageProcessing.SearchWonderPickMenu(image);
+                if (searchWonderPickMenuResult.HasValue)
                 {
-                    OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
-                    var searchWonderPickMenuResult = ImageProcessing.SearchWonderPickMenu(image);
-                    if (searchWonderPickMenuResult.HasValue)
-                    {
-                        (double alpha, Point location) = searchWonderPickMenuResult.Value;
-                        Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found in location:{location} (alpha:{alpha})");
-                        return;
-                    }
-
-                    var searchWonderPickButtonResult = ImageProcessing.SearchWonderPickButton(image);
-                    if (searchWonderPickButtonResult.HasValue)
-                    {
-                        (double alpha, Point location) = searchWonderPickButtonResult.Value;
-                        Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
-                        await adbClient.ClickAsync(deviceData, location);
-                        await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
-                    }
-                    await Task.Delay(TimeSpan.FromMilliseconds(100), program.Token);
+                    (double alpha, Point location) = searchWonderPickMenuResult.Value;
+                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found in location:{location} (alpha:{alpha})");
+                    return;
                 }
+
+                var searchWonderPickButtonResult = ImageProcessing.SearchWonderPickButton(image);
+                if (searchWonderPickButtonResult.HasValue)
+                {
+                    (double alpha, Point location) = searchWonderPickButtonResult.Value;
+                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
+                    await adbClient.ClickAsync(deviceData, location);
+                    await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
+                }
+                await Task.Delay(TimeSpan.FromMilliseconds(100), program.Token);
             }
         }
 
         private async Task ClickOKAsync()
         {
-            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
+            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            while (!program.IsCancellationRequested)
             {
-                while (!program.IsCancellationRequested)
+                OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
+                var searchPastOkResult = ImageProcessing.SearchWhiteScreen(image);
+                if (searchPastOkResult.HasValue)
                 {
-                    OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
-                    var searchPastOkResult = ImageProcessing.SearchWhiteScreen(image);
-                    if (searchPastOkResult.HasValue)
-                    {
-                        (double alpha, Point location) = searchPastOkResult.Value;
-                        Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found in location:{location} (alpha:{alpha})");
-                        return;
-                    }
-
-                    var searchOkResult = ImageProcessing.SearchOK(image);
-                    if (searchOkResult.HasValue)
-                    {
-                        (double alpha, Point location) = searchOkResult.Value;
-                        Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
-                        await adbClient.ClickAsync(deviceData, location);
-                        await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
-                    }
-                    await Task.Delay(TimeSpan.FromMilliseconds(100), program.Token);
+                    (double alpha, Point location) = searchPastOkResult.Value;
+                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found in location:{location} (alpha:{alpha})");
+                    return;
                 }
+
+                var searchOkResult = ImageProcessing.SearchOK(image);
+                if (searchOkResult.HasValue)
+                {
+                    (double alpha, Point location) = searchOkResult.Value;
+                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
+                    await adbClient.ClickAsync(deviceData, location);
+                    await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
+                }
+                await Task.Delay(TimeSpan.FromMilliseconds(100), program.Token);
             }
         }
 
         private async Task ClickTopRightCardAsync()
         {
-            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
+            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
+            var searchCardResult = ImageProcessing.SearchCard(image);
+            if (searchCardResult.HasValue)
             {
-                OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
-                var searchCardResult = ImageProcessing.SearchCard(image);
-                if (searchCardResult.HasValue)
-                {
-                    (double alpha, Point location) = searchCardResult.Value;
-                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
-                    await adbClient.ClickAsync(deviceData, location);
-                    await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
-                }
+                (double alpha, Point location) = searchCardResult.Value;
+                Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
+                await adbClient.ClickAsync(deviceData, location);
+                await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
             }
         }
 
         protected async Task ReturnToMainMenuAsync()
         {
-            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
+            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            while (!program.IsCancellationRequested)
             {
-                while (!program.IsCancellationRequested)
+                OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
+                var mainMenuResult = ImageProcessing.SearchWonderPickButton(image);
+                if (mainMenuResult.HasValue)
                 {
-                    OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
-                    var mainMenuResult = ImageProcessing.SearchWonderPickButton(image);
-                    if (mainMenuResult.HasValue)
-                    {
-                        (double alpha, Point location) = mainMenuResult.Value;
-                        Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found wonder pick in location:{location} ({alpha})");
-                        await Task.Delay(TimeSpan.FromSeconds(10), program.Token);
-                        break;
-                    }
-
-                    var registernewCardResult = ImageProcessing.SearchRegisterNewCard(image);
-                    if (registernewCardResult.HasValue)
-                    {
-                        (double alpha, Point location) = registernewCardResult.Value;
-                        Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location} ({alpha})");
-                        await adbClient.ClickAsync(deviceData, location);
-                        await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
-
-                    }
-
-                    Logger.Log(Logger.LogLevel.Debug, LogHeader, "Going back");
-                    await adbClient.ClickBackButtonAsync(deviceData);
-                    await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
+                    (double alpha, Point location) = mainMenuResult.Value;
+                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found wonder pick in location:{location} ({alpha})");
+                    await Task.Delay(TimeSpan.FromSeconds(10), program.Token);
+                    break;
                 }
+
+                var registernewCardResult = ImageProcessing.SearchRegisterNewCard(image);
+                if (registernewCardResult.HasValue)
+                {
+                    (double alpha, Point location) = registernewCardResult.Value;
+                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location} ({alpha})");
+                    await adbClient.ClickAsync(deviceData, location);
+                    await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
+
+                }
+
+                Logger.Log(Logger.LogLevel.Debug, LogHeader, "Going back");
+                await adbClient.ClickBackButtonAsync(deviceData);
+                await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
             }
         }
 
         private async Task CheckWonderPickOnceAsync()
         {
-            using (LogContext logContext = new LogContext(Logger.LogLevel.Info, LogHeader))
+            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            await OpenWonderPickMenuAsync();
+
+            await Task.Delay(TimeSpan.FromSeconds(30), program.Token);
+            OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
+            var bonusWonderPickResult = ImageProcessing.SearchBonusWonderPick(image);
+            if (bonusWonderPickResult.HasValue)
             {
-                await OpenWonderPickMenuAsync();
+                (double alpha, Point location) = bonusWonderPickResult.Value;
+                Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found bonus wonder pick in location:{location} ({alpha})");
+                await adbClient.ClickAsync(deviceData, location, program.Token);
 
+                await ClickOKAsync();
                 await Task.Delay(TimeSpan.FromSeconds(30), program.Token);
-                OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
-                var bonusWonderPickResult = ImageProcessing.SearchBonusWonderPick(image);
-                if (bonusWonderPickResult.HasValue)
-                {
-                    (double alpha, Point location) = bonusWonderPickResult.Value;
-                    await adbClient.ClickAsync(deviceData, location, program.Token);
 
-                    await ClickOKAsync();
-                    await Task.Delay(TimeSpan.FromSeconds(30), program.Token);
-
-                    await ClickTopRightCardAsync();
-                    await Task.Delay(TimeSpan.FromSeconds(30), program.Token);
-                }
-                await ReturnToMainMenuAsync();
+                await ClickTopRightCardAsync();
+                await Task.Delay(TimeSpan.FromSeconds(30), program.Token);
             }
+            await ReturnToMainMenuAsync();
         }
 
         public async Task StartCheckWonderPickPeriodicallyAsync()

@@ -35,7 +35,7 @@ namespace TCGPocketAutomation
         }
     }
 
-    public class LogContext : IDisposable
+    public sealed class LogContext : IDisposable
     {
         private readonly Logger.LogLevel logLevel;
         private readonly string header;
@@ -58,8 +58,8 @@ namespace TCGPocketAutomation
     [Target("Discord")]
     public class DiscordLogger : AsyncTaskTarget
     {
-        private static readonly DiscordSocketClient client = new DiscordSocketClient();
-        private static readonly List<(LogEventInfo, CancellationToken)> waitingMessages = new List<(LogEventInfo, CancellationToken)>();
+        private static readonly DiscordSocketClient client = new();
+        private static readonly List<(LogEventInfo, CancellationToken)> waitingMessages = [];
 
         protected override async Task WriteAsyncTask(LogEventInfo logEvent, CancellationToken cancellationToken)
         {
@@ -76,8 +76,7 @@ namespace TCGPocketAutomation
                     client.Ready += SendWaitingMessagesAsync;
                     break;
                 case LoginState.LoggedIn:
-                    IMessageChannel? channel = await client.GetChannelAsync(1294233612727750721) as IMessageChannel;
-                    if (channel != null)
+                    if (await client.GetChannelAsync(1294233612727750721) is IMessageChannel channel)
                     {
                         await channel.SendMessageAsync(logEvent.Message);
                     }
