@@ -76,7 +76,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                     client.Ready += SendWaitingMessagesAsync;
                     break;
                 case LoginState.LoggedIn:
-                    if (await client.GetChannelAsync(1294233612727750721) is IMessageChannel channel)
+                    if (await client.GetChannelAsync(SettingsManager.Settings.DiscordChannelId) is IMessageChannel channel)
                     {
                         await channel.SendMessageAsync(logEvent.Message);
                     }

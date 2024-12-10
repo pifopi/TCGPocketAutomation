@@ -3,8 +3,10 @@ using System.Text.Json;
 
 namespace TCGPocketAutomation.TCGPocketAutomation
 {
-    public class ADBSettings
+    public class Settings
     {
+        public ulong DiscordUserId { get; set; }
+        public ulong DiscordChannelId { get; set; }
         public int BluestacksMaxParallelInstance { get; set; } = new();
         public List<BluestacksSettings> BluestacksInstances { get; set; } = [];
         public int LDPlayerMaxParallelInstance { get; set; } = new();
@@ -35,16 +37,21 @@ namespace TCGPocketAutomation.TCGPocketAutomation
 
     public static class SettingsManager
     {
-        private const string SettingsFile = "config/settings.json";
+        public static Settings Settings { get; private set; } = new();
 
-        public static ADBSettings LoadSettings()
+        public static void LoadSettings(string settingsFile)
         {
-            if (File.Exists(SettingsFile))
+            if (!File.Exists(settingsFile))
             {
-                string jsonString = File.ReadAllText(SettingsFile);
-                return JsonSerializer.Deserialize<ADBSettings>(jsonString) ?? new ADBSettings();
+                throw new FileNotFoundException(settingsFile);
             }
-            return new ADBSettings();
+            string jsonString = File.ReadAllText(settingsFile);
+            Settings? settings = JsonSerializer.Deserialize<Settings>(jsonString);
+            if (settings == null)
+            {
+                throw new Exception($"{settingsFile} cannot be read properly. Verify you fill it properly");
+            }
+            Settings = settings;
         }
     }
 }

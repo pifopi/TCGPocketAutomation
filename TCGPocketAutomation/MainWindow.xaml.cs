@@ -17,15 +17,15 @@ namespace TCGPocketAutomation.TCGPocketAutomation
         {
             InitializeComponent();
 
-            ADBSettings settings = SettingsManager.LoadSettings();
+            SettingsManager.LoadSettings(@"config\settings.json");
 
             LogManager.Configuration = new XmlLoggingConfiguration(@"config\NLog.config");
 
             Logger.Log(Logger.LogLevel.Info, "", "-------------------------------------------------------------------------");
-            Logger.Log(Logger.LogLevel.Info, "", "<@282197676982927375> Starting the program");
+            Logger.Log(Logger.LogLevel.Info, "", $"<@{SettingsManager.Settings.DiscordUserId}> Starting the program");
 
-            ADBInstanceBluestacks.SetMaxParallelInstance(settings.BluestacksMaxParallelInstance);
-            foreach (var s in settings.BluestacksInstances)
+            ADBInstanceBluestacks.SetMaxParallelInstance(SettingsManager.Settings.BluestacksMaxParallelInstance);
+            foreach (var s in SettingsManager.Settings.BluestacksInstances)
             {
                 ADBInstancesBluestacks.Add(new ADBInstanceBluestacks
                 {
@@ -36,8 +36,8 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                 });
             }
 
-            ADBInstanceLDPlayer.SetMaxParallelInstance(settings.LDPlayerMaxParallelInstance);
-            foreach (var s in settings.LDPlayerInstances)
+            ADBInstanceLDPlayer.SetMaxParallelInstance(SettingsManager.Settings.LDPlayerMaxParallelInstance);
+            foreach (var s in SettingsManager.Settings.LDPlayerInstances)
             {
                 ADBInstancesLDPlayer.Add(new ADBInstanceLDPlayer
                 {
@@ -46,7 +46,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                 });
             }
 
-            foreach (var s in settings.RealPhoneInstances)
+            foreach (var s in SettingsManager.Settings.RealPhoneInstances)
             {
                 ADBInstancesRealPhoneViaIP.Add(new ADBInstanceRealPhoneViaIP
                 {

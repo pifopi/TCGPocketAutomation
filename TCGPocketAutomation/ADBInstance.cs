@@ -261,7 +261,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                 {
                     if (exception is not TaskCanceledException && exception is not OperationCanceledException)
                     {
-                        Logger.Log(Logger.LogLevel.Warning, LogHeader, $"<@282197676982927375> An exception has been raised:{exception}");
+                        Logger.Log(Logger.LogLevel.Warning, LogHeader, $"<@{SettingsManager.Settings.DiscordUserId}> An exception has been raised:{exception}");
                     }
                     await DisconnectFromADBInstanceAsync();
                 }
@@ -281,7 +281,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             {
                 if (exception is not TaskCanceledException && exception is not OperationCanceledException)
                 {
-                    Logger.Log(Logger.LogLevel.Warning, LogHeader, $"<@282197676982927375> An exception has been raised:{exception}");
+                    Logger.Log(Logger.LogLevel.Warning, LogHeader, $"<@{SettingsManager.Settings.DiscordUserId}> An exception has been raised:{exception}");
                 }
                 await DisconnectFromADBInstanceAsync();
             }
