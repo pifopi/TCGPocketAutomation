@@ -69,7 +69,7 @@ namespace TCGPocketAutomation
 
         public void StopProgram()
         {
-            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             program.Cancel();
             program = new CancellationTokenSource();
             Status = StatusEnum.NotRunning;
@@ -81,7 +81,7 @@ namespace TCGPocketAutomation
 
         protected async Task WaitForTileScreenAsync()
         {
-            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             while (!program.IsCancellationRequested)
             {
                 OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
@@ -89,7 +89,7 @@ namespace TCGPocketAutomation
                 if (searchTitleScreenResult.HasValue)
                 {
                     (double alpha, Point location) = searchTitleScreenResult.Value;
-                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found in location:{location} (alpha:{alpha})");
+                    Logger.Log(Logger.LogLevel.Info, LogHeader, $"Found in location:{location} (alpha:{alpha})");
                     return;
                 }
                 await Task.Delay(TimeSpan.FromMilliseconds(100), program.Token);
@@ -98,7 +98,7 @@ namespace TCGPocketAutomation
 
         protected async Task GoPastTileScreenAsync()
         {
-            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             while (!program.IsCancellationRequested)
             {
                 OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
@@ -106,7 +106,7 @@ namespace TCGPocketAutomation
                 if (searchPastTitleScreenResult.HasValue)
                 {
                     (double alpha, Point location) = searchPastTitleScreenResult.Value;
-                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found in location:{location} (alpha:{alpha})");
+                    Logger.Log(Logger.LogLevel.Info, LogHeader, $"Found in location:{location} (alpha:{alpha})");
                     return;
                 }
 
@@ -114,7 +114,7 @@ namespace TCGPocketAutomation
                 if (searchTitleScreenResult.HasValue)
                 {
                     (double alpha, Point location) = searchTitleScreenResult.Value;
-                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
+                    Logger.Log(Logger.LogLevel.Info, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
                     await adbClient.ClickAsync(deviceData, location);
                     await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
                 }
@@ -124,7 +124,7 @@ namespace TCGPocketAutomation
 
         private async Task OpenWonderPickMenuAsync()
         {
-            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             while (!program.IsCancellationRequested)
             {
                 OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
@@ -132,7 +132,7 @@ namespace TCGPocketAutomation
                 if (searchWonderPickMenuResult.HasValue)
                 {
                     (double alpha, Point location) = searchWonderPickMenuResult.Value;
-                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found in location:{location} (alpha:{alpha})");
+                    Logger.Log(Logger.LogLevel.Info, LogHeader, $"Found in location:{location} (alpha:{alpha})");
                     return;
                 }
 
@@ -140,7 +140,7 @@ namespace TCGPocketAutomation
                 if (searchWonderPickButtonResult.HasValue)
                 {
                     (double alpha, Point location) = searchWonderPickButtonResult.Value;
-                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
+                    Logger.Log(Logger.LogLevel.Info, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
                     await adbClient.ClickAsync(deviceData, location);
                     await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
                 }
@@ -150,7 +150,7 @@ namespace TCGPocketAutomation
 
         private async Task ClickOKAsync()
         {
-            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             while (!program.IsCancellationRequested)
             {
                 OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
@@ -158,7 +158,7 @@ namespace TCGPocketAutomation
                 if (searchPastOkResult.HasValue)
                 {
                     (double alpha, Point location) = searchPastOkResult.Value;
-                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found in location:{location} (alpha:{alpha})");
+                    Logger.Log(Logger.LogLevel.Info, LogHeader, $"Found in location:{location} (alpha:{alpha})");
                     return;
                 }
 
@@ -166,7 +166,7 @@ namespace TCGPocketAutomation
                 if (searchOkResult.HasValue)
                 {
                     (double alpha, Point location) = searchOkResult.Value;
-                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
+                    Logger.Log(Logger.LogLevel.Info, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
                     await adbClient.ClickAsync(deviceData, location);
                     await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
                 }
@@ -176,13 +176,13 @@ namespace TCGPocketAutomation
 
         private async Task ClickTopRightCardAsync()
         {
-            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
             var searchCardResult = ImageProcessing.SearchCard(image);
             if (searchCardResult.HasValue)
             {
                 (double alpha, Point location) = searchCardResult.Value;
-                Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
+                Logger.Log(Logger.LogLevel.Info, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
                 await adbClient.ClickAsync(deviceData, location);
                 await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
             }
@@ -190,7 +190,7 @@ namespace TCGPocketAutomation
 
         protected async Task ReturnToMainMenuAsync()
         {
-            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             while (!program.IsCancellationRequested)
             {
                 OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
@@ -198,7 +198,7 @@ namespace TCGPocketAutomation
                 if (mainMenuResult.HasValue)
                 {
                     (double alpha, Point location) = mainMenuResult.Value;
-                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found wonder pick in location:{location} ({alpha})");
+                    Logger.Log(Logger.LogLevel.Info, LogHeader, $"Found in location:{location} (alpha:{alpha})");
                     await Task.Delay(TimeSpan.FromSeconds(10), program.Token);
                     break;
                 }
@@ -207,13 +207,12 @@ namespace TCGPocketAutomation
                 if (registernewCardResult.HasValue)
                 {
                     (double alpha, Point location) = registernewCardResult.Value;
-                    Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Clicking on location:{location} ({alpha})");
+                    Logger.Log(Logger.LogLevel.Info, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
                     await adbClient.ClickAsync(deviceData, location);
                     await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
-
                 }
 
-                Logger.Log(Logger.LogLevel.Debug, LogHeader, "Going back");
+                Logger.Log(Logger.LogLevel.Info, LogHeader, "Going back");
                 await adbClient.ClickBackButtonAsync(deviceData);
                 await Task.Delay(TimeSpan.FromSeconds(1), program.Token);
             }
@@ -221,7 +220,7 @@ namespace TCGPocketAutomation
 
         private async Task CheckWonderPickOnceAsync()
         {
-            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             await OpenWonderPickMenuAsync();
 
             await Task.Delay(TimeSpan.FromSeconds(30), program.Token);
@@ -230,7 +229,7 @@ namespace TCGPocketAutomation
             if (bonusWonderPickResult.HasValue)
             {
                 (double alpha, Point location) = bonusWonderPickResult.Value;
-                Logger.Log(Logger.LogLevel.Debug, LogHeader, $"Found bonus wonder pick in location:{location} ({alpha})");
+                Logger.Log(Logger.LogLevel.Info, LogHeader, $"Found bonus wonder pick in location:{location} (alpha:{alpha})");
                 await adbClient.ClickAsync(deviceData, location, program.Token);
 
                 await ClickOKAsync();

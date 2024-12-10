@@ -28,7 +28,7 @@ namespace TCGPocketAutomation
 
         protected override async Task ConnectToADBInstanceAsync()
         {
-            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             string resultConnect = adbClient.Connect(IP, Port);
             if (resultConnect != $"connected to {IP}:{Port}" &&
                 resultConnect != $"already connected to {IP}:{Port}")
@@ -43,7 +43,7 @@ namespace TCGPocketAutomation
 
         protected override Task DisconnectFromADBInstanceAsync()
         {
-            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             if (!needToDisconnect)
             {
                 return Task.CompletedTask;

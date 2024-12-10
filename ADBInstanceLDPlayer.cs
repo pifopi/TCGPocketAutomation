@@ -34,7 +34,7 @@ namespace TCGPocketAutomation
 
         protected override async Task ConnectToADBInstanceAsync()
         {
-            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Waiting for a semaphore ({semaphore.CurrentCount} available)");
             await semaphore.WaitAsync(program.Token);
             semaphoreToRelease = true;
@@ -58,7 +58,7 @@ namespace TCGPocketAutomation
 
         protected override Task DisconnectFromADBInstanceAsync()
         {
-            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader);
+            using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             if (!semaphoreToRelease)
             {
                 Logger.Log(Logger.LogLevel.Info, LogHeader, $"No semaphore to release ({semaphore.CurrentCount} available)");
