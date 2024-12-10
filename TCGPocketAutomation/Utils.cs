@@ -2,7 +2,7 @@
 using AdvancedSharpAdbClient.Models;
 using System.Diagnostics;
 
-namespace TCGPocketAutomation
+namespace TCGPocketAutomation.TCGPocketAutomation
 {
     public static class Utils
     {

@@ -1,4 +1,4 @@
-﻿namespace TCGPocketAutomation
+﻿namespace TCGPocketAutomation.TCGPocketAutomation
 {
     public static class ImageProcessing
     {
