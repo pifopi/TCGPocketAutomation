@@ -1,4 +1,6 @@
-﻿using System.Collections.ObjectModel;
+﻿using NLog.Config;
+using NLog;
+using System.Collections.ObjectModel;
 using System.Windows;
 
 namespace TCGPocketAutomation
@@ -11,43 +13,54 @@ namespace TCGPocketAutomation
         public ObservableCollection<ADBInstanceBluestacks> ADBInstancesBluestacks { get; set; }
         public ObservableCollection<ADBInstanceLDPlayer> ADBInstancesLDPlayer { get; set; }
         public ObservableCollection<ADBInstanceRealPhoneViaIP> ADBInstancesRealPhoneViaIP { get; set; }
-
         public MainWindow()
         {
+            InitializeComponent();
+
             ADBSettings settings = SettingsManager.LoadSettings();
 
+            LogManager.Configuration = new XmlLoggingConfiguration(@"config\NLog.config");
+
+            Logger.Log(Logger.LogLevel.Info, "", "-------------------------------------------------------------------------");
+            Logger.Log(Logger.LogLevel.Info, "", "<@282197676982927375> Starting the program");
+
             ADBInstanceBluestacks.SetMaxParallelInstance(settings.BluestacksMaxParallelInstance);
-            ADBInstancesBluestacks = new ObservableCollection<ADBInstanceBluestacks>(
-                settings.BluestacksInstances.Select(s => new ADBInstanceBluestacks
+            ADBInstancesBluestacks = new ObservableCollection<ADBInstanceBluestacks>();
+            foreach (var s in settings.BluestacksInstances)
+            {
+                ADBInstancesBluestacks.Add(new ADBInstanceBluestacks
                 {
                     Name = s.Name,
                     BluestacksName = s.BluestacksName,
                     IP = s.IP,
                     Port = s.Port
-                }));
+                });
+            }
 
+            ADBInstancesLDPlayer = new ObservableCollection<ADBInstanceLDPlayer>();
             ADBInstanceLDPlayer.SetMaxParallelInstance(settings.LDPlayerMaxParallelInstance);
-            ADBInstancesLDPlayer = new ObservableCollection<ADBInstanceLDPlayer>(
-                settings.LDPlayerInstances.Select(s => new ADBInstanceLDPlayer
+            foreach (var s in settings.LDPlayerInstances)
+            {
+                ADBInstancesLDPlayer.Add(new ADBInstanceLDPlayer
                 {
                     Name = s.Name,
                     ADBName = s.ADBName
-                }));
+                });
+            }
 
-            ADBInstancesRealPhoneViaIP = new ObservableCollection<ADBInstanceRealPhoneViaIP>(
-                settings.RealPhoneInstances.Select(s => new ADBInstanceRealPhoneViaIP
+            ADBInstancesRealPhoneViaIP = new ObservableCollection<ADBInstanceRealPhoneViaIP>();
+            foreach (var s in settings.RealPhoneInstances)
+            {
+                ADBInstancesRealPhoneViaIP.Add(new ADBInstanceRealPhoneViaIP
                 {
                     Name = s.Name,
                     IP = s.IP,
                     Port = s.Port
-                }));
-
-            Logger.Log(Logger.LogLevel.Info, "", "-------------------------------------------------------------------------");
-            Logger.Log(Logger.LogLevel.Info, "", "<@282197676982927375> Starting the program");
+                });
+            }
 
             Utils.StartADBServer();
 
-            InitializeComponent();
             DataContext = this;
         }
 

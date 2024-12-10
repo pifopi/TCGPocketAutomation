@@ -35,7 +35,7 @@ namespace TCGPocketAutomation
 
     public static class SettingsManager
     {
-        private const string SettingsFile = "settings.json";
+        private const string SettingsFile = "config/settings.json";
 
         public static ADBSettings LoadSettings()
         {
