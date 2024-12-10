@@ -4,7 +4,6 @@ Those are simple scripts to automate pokemon TCG pocket over adb and using open 
 
 # TODO list
 - implement timeout cts.CancelAfter(TimeSpan.FromSeconds(timeoutSeconds));
-- review log level
 - make discord messages prettier
 - make discord channel + ping as settings
 - make a setup guide

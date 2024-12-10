@@ -10,9 +10,9 @@ namespace TCGPocketAutomation.TCGPocketAutomation
     /// </summary>
     public partial class MainWindow : Window
     {
-        public ObservableCollection<ADBInstanceBluestacks> ADBInstancesBluestacks { get; set; }
-        public ObservableCollection<ADBInstanceLDPlayer> ADBInstancesLDPlayer { get; set; }
-        public ObservableCollection<ADBInstanceRealPhoneViaIP> ADBInstancesRealPhoneViaIP { get; set; }
+        public ObservableCollection<ADBInstanceBluestacks> ADBInstancesBluestacks { get; set; } = [];
+        public ObservableCollection<ADBInstanceLDPlayer> ADBInstancesLDPlayer { get; set; } = [];
+        public ObservableCollection<ADBInstanceRealPhoneViaIP> ADBInstancesRealPhoneViaIP { get; set; } = [];
         public MainWindow()
         {
             InitializeComponent();
@@ -25,7 +25,6 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             Logger.Log(Logger.LogLevel.Info, "", "<@282197676982927375> Starting the program");
 
             ADBInstanceBluestacks.SetMaxParallelInstance(settings.BluestacksMaxParallelInstance);
-            ADBInstancesBluestacks = [];
             foreach (var s in settings.BluestacksInstances)
             {
                 ADBInstancesBluestacks.Add(new ADBInstanceBluestacks
@@ -37,7 +36,6 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                 });
             }
 
-            ADBInstancesLDPlayer = [];
             ADBInstanceLDPlayer.SetMaxParallelInstance(settings.LDPlayerMaxParallelInstance);
             foreach (var s in settings.LDPlayerInstances)
             {
@@ -48,7 +46,6 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                 });
             }
 
-            ADBInstancesRealPhoneViaIP = [];
             foreach (var s in settings.RealPhoneInstances)
             {
                 ADBInstancesRealPhoneViaIP.Add(new ADBInstanceRealPhoneViaIP
