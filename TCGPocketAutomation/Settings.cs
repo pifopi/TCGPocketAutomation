@@ -46,11 +46,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                 throw new FileNotFoundException(settingsFile);
             }
             string jsonString = File.ReadAllText(settingsFile);
-            Settings? settings = JsonSerializer.Deserialize<Settings>(jsonString);
-            if (settings == null)
-            {
-                throw new Exception($"{settingsFile} cannot be read properly. Verify you fill it properly");
-            }
+            Settings settings = JsonSerializer.Deserialize<Settings>(jsonString) ?? throw new Exception($"{settingsFile} cannot be read properly. Verify you fill it properly");
             Settings = settings;
         }
     }
