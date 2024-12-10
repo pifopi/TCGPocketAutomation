@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace TCGPocketAutomation
+namespace TCGPocketAutomation.TCGPocketAutomation
 {
     /// <summary>
     /// Interaction logic for App.xaml

@@ -1,7 +1,7 @@
 ﻿using System.IO;
 using System.Text.Json;
 
-namespace TCGPocketAutomation
+namespace TCGPocketAutomation.TCGPocketAutomation
 {
     public class ADBSettings
     {

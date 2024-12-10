@@ -3,7 +3,7 @@ using NLog;
 using System.Collections.ObjectModel;
 using System.Windows;
 
-namespace TCGPocketAutomation
+namespace TCGPocketAutomation.TCGPocketAutomation
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -25,7 +25,7 @@ namespace TCGPocketAutomation
             Logger.Log(Logger.LogLevel.Info, "", "<@282197676982927375> Starting the program");
 
             ADBInstanceBluestacks.SetMaxParallelInstance(settings.BluestacksMaxParallelInstance);
-            ADBInstancesBluestacks = new ObservableCollection<ADBInstanceBluestacks>();
+            ADBInstancesBluestacks = [];
             foreach (var s in settings.BluestacksInstances)
             {
                 ADBInstancesBluestacks.Add(new ADBInstanceBluestacks
@@ -37,7 +37,7 @@ namespace TCGPocketAutomation
                 });
             }
 
-            ADBInstancesLDPlayer = new ObservableCollection<ADBInstanceLDPlayer>();
+            ADBInstancesLDPlayer = [];
             ADBInstanceLDPlayer.SetMaxParallelInstance(settings.LDPlayerMaxParallelInstance);
             foreach (var s in settings.LDPlayerInstances)
             {
@@ -48,7 +48,7 @@ namespace TCGPocketAutomation
                 });
             }
 
-            ADBInstancesRealPhoneViaIP = new ObservableCollection<ADBInstanceRealPhoneViaIP>();
+            ADBInstancesRealPhoneViaIP = [];
             foreach (var s in settings.RealPhoneInstances)
             {
                 ADBInstancesRealPhoneViaIP.Add(new ADBInstanceRealPhoneViaIP

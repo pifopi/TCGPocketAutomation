@@ -1,7 +1,7 @@
 ﻿using AdvancedSharpAdbClient.Models;
 using System.Windows.Input;
 
-namespace TCGPocketAutomation
+namespace TCGPocketAutomation.TCGPocketAutomation
 {
     public class ADBInstanceLDPlayer : ADBInstance
     {

@@ -4,7 +4,7 @@ using NLog;
 using NLog.Targets;
 using System.Runtime.CompilerServices;
 
-namespace TCGPocketAutomation
+namespace TCGPocketAutomation.TCGPocketAutomation
 {
     public static class Logger
     {

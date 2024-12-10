@@ -1,6 +1,6 @@
 ﻿using AdvancedSharpAdbClient.Models;
 
-namespace TCGPocketAutomation
+namespace TCGPocketAutomation.TCGPocketAutomation
 {
     public class ADBInstanceBluestacks : ADBInstance
     {
