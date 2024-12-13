@@ -26,7 +26,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             get => $"{Name}\t{IP}:{Port}";
         }
 
-        protected override async Task ConnectToADBInstanceAsync()
+        protected override async Task ConnectToADBInstanceAsync(CancellationTokenSource cts)
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             string resultConnect = adbClient.Connect(IP, Port);
@@ -38,7 +38,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             needToDisconnect = true;
             DeviceData? device = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}");
             deviceData = device.Value;
-            await Task.Delay(TimeSpan.FromSeconds(10), program.Token);
+            await Task.Delay(TimeSpan.FromSeconds(10), cts.Token);
         }
 
         protected override Task DisconnectFromADBInstanceAsync()

@@ -40,16 +40,16 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             semaphore = new SemaphoreSlim(maxParallelInstance, maxParallelInstance);
         }
 
-        protected override async Task ConnectToADBInstanceAsync()
+        protected override async Task ConnectToADBInstanceAsync(CancellationTokenSource cts)
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Waiting for a semaphore ({semaphore.CurrentCount} available)");
-            await semaphore.WaitAsync(program.Token);
+            await semaphore.WaitAsync(cts.Token);
             semaphoreToRelease = true;
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({semaphore.CurrentCount} available)");
 
             Utils.ExecuteCmd($"HD-Player.exe --instance {BluestacksName} --cmd launchAppWithBsx --package jp.pokemon.pokemontcgp");
-            await Task.Delay(TimeSpan.FromMinutes(1), program.Token);
+            await Task.Delay(TimeSpan.FromMinutes(1), cts.Token);
             string resultConnect = adbClient.Connect(IP, Port);
             if (resultConnect != $"connected to {IP}:{Port}" &&
                 resultConnect != $"already connected to {IP}:{Port}")
@@ -58,10 +58,10 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             }
             DeviceData? device = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}");
             deviceData = device.Value;
-            await Task.Delay(TimeSpan.FromSeconds(20), program.Token);
-            await WaitForTileScreenAsync();
-            await GoPastTileScreenAsync();
-            await ReturnToMainMenuAsync();
+            await Task.Delay(TimeSpan.FromSeconds(20), cts.Token);
+            await WaitForTileScreenAsync(TimeSpan.FromMinutes(2), cts);
+            await GoPastTileScreenAsync(TimeSpan.FromSeconds(30), cts);
+            await ReturnToMainMenuAsync(TimeSpan.FromSeconds(30), cts);
         }
 
         protected override Task DisconnectFromADBInstanceAsync()

@@ -3,7 +3,6 @@
 Those are simple scripts to automate pokemon TCG pocket over adb and using open cv for template matching + discord message for logging what happened
 
 # TODO list
-- implement timeout cts.CancelAfter(TimeSpan.FromSeconds(timeoutSeconds));
 - make discord messages prettier
 - make a setup guide
   - put adb, Bluestacks and LDPlayer in your PATH
