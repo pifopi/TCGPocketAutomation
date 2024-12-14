@@ -164,7 +164,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             childCts.CancelAfter(timeout);
             while (true)
             {
-                cts.Token.ThrowIfCancellationRequested();
+                childCts.Token.ThrowIfCancellationRequested();
                 OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
                 var searchPastOkResult = ImageProcessing.SearchWhiteScreen(image);
                 if (searchPastOkResult.HasValue)
