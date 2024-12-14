@@ -38,6 +38,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Waiting for a semaphore ({semaphore.CurrentCount} available)");
             await semaphore.WaitAsync(cts.Token);
             semaphoreToRelease = true;
+            cts.Token.ThrowIfCancellationRequested();
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({semaphore.CurrentCount} available)");
 
             Utils.ExecuteCmd($"ldconsole.exe launchex --name {LDPlayerName} --packagename jp.pokemon.pokemontcgp");

@@ -46,6 +46,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Waiting for a semaphore ({semaphore.CurrentCount} available)");
             await semaphore.WaitAsync(cts.Token);
             semaphoreToRelease = true;
+            cts.Token.ThrowIfCancellationRequested();
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({semaphore.CurrentCount} available)");
 
             Utils.ExecuteCmd($"HD-Player.exe --instance {BluestacksName} --cmd launchAppWithBsx --package jp.pokemon.pokemontcgp");
