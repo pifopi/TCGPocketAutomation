@@ -32,17 +32,17 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             semaphore = new SemaphoreSlim(maxParallelInstance, maxParallelInstance);
         }
 
-        protected override async Task ConnectToADBInstanceAsync(CancellationTokenSource cts)
+        protected override async Task ConnectToADBInstanceAsync(CancellationTokenSource parentCts)
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Waiting for a semaphore ({semaphore.CurrentCount} available)");
-            await semaphore.WaitAsync(cts.Token);
+            await semaphore.WaitAsync(parentCts.Token);
             semaphoreToRelease = true;
-            cts.Token.ThrowIfCancellationRequested();
+            parentCts.Token.ThrowIfCancellationRequested();
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({semaphore.CurrentCount} available)");
 
             Utils.ExecuteCmd($"ldconsole.exe launchex --name {LDPlayerName} --packagename jp.pokemon.pokemontcgp");
-            var childCts = CancellationTokenSource.CreateLinkedTokenSource(cts.Token);
+            var childCts = CancellationTokenSource.CreateLinkedTokenSource(parentCts.Token);
             childCts.CancelAfter(TimeSpan.FromMinutes(1));
             while (true)
             {
@@ -54,10 +54,10 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                     break;
                 }
             }
-            await Task.Delay(TimeSpan.FromSeconds(20), cts.Token);
-            await WaitForTileScreenAsync(TimeSpan.FromMinutes(2), cts);
-            await GoPastTileScreenAsync(TimeSpan.FromSeconds(30), cts);
-            await ReturnToMainMenuAsync(TimeSpan.FromSeconds(30), cts);
+            await Task.Delay(TimeSpan.FromSeconds(30), parentCts.Token);
+            await WaitForTileScreenAsync(TimeSpan.FromMinutes(2), parentCts);
+            await GoPastTileScreenAsync(TimeSpan.FromSeconds(30), parentCts);
+            await ReturnToMainMenuAsync(TimeSpan.FromSeconds(30), parentCts);
         }
 
         protected override Task DisconnectFromADBInstanceAsync()

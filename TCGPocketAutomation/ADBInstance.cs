@@ -79,13 +79,14 @@ namespace TCGPocketAutomation.TCGPocketAutomation
 
         protected abstract Task DisconnectFromADBInstanceAsync();
 
-        protected async Task WaitForTileScreenAsync(TimeSpan timeout, CancellationTokenSource cts)
+        protected async Task WaitForTileScreenAsync(TimeSpan timeout, CancellationTokenSource parentCts)
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
-            cts.CancelAfter(timeout);
+            var childCts = CancellationTokenSource.CreateLinkedTokenSource(parentCts.Token);
+            childCts.CancelAfter(timeout);
             while (true)
             {
-                cts.Token.ThrowIfCancellationRequested();
+                childCts.Token.ThrowIfCancellationRequested();
                 OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
                 var searchTitleScreenResult = ImageProcessing.SearchTitleScreen(image);
                 if (searchTitleScreenResult.HasValue)
@@ -94,17 +95,18 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                     Logger.Log(Logger.LogLevel.Info, LogHeader, $"Found in location:{location} (alpha:{alpha})");
                     return;
                 }
-                await Task.Delay(TimeSpan.FromMilliseconds(100), cts.Token);
+                await Task.Delay(TimeSpan.FromMilliseconds(100), childCts.Token);
             }
         }
 
-        protected async Task GoPastTileScreenAsync(TimeSpan timeout, CancellationTokenSource cts)
+        protected async Task GoPastTileScreenAsync(TimeSpan timeout, CancellationTokenSource parentCts)
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
-            cts.CancelAfter(timeout);
+            var childCts = CancellationTokenSource.CreateLinkedTokenSource(parentCts.Token);
+            childCts.CancelAfter(timeout);
             while (true)
             {
-                cts.Token.ThrowIfCancellationRequested();
+                childCts.Token.ThrowIfCancellationRequested();
                 OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
                 var searchPastTitleScreenResult = ImageProcessing.SearchWhiteScreen(image);
                 if (searchPastTitleScreenResult.HasValue)
@@ -120,19 +122,20 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                     (double alpha, Point location) = searchTitleScreenResult.Value;
                     Logger.Log(Logger.LogLevel.Info, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
                     await adbClient.ClickAsync(deviceData, location);
-                    await Task.Delay(TimeSpan.FromSeconds(1), cts.Token);
+                    await Task.Delay(TimeSpan.FromSeconds(1), childCts.Token);
                 }
-                await Task.Delay(TimeSpan.FromMilliseconds(100), cts.Token);
+                await Task.Delay(TimeSpan.FromMilliseconds(100), childCts.Token);
             }
         }
 
-        private async Task OpenWonderPickMenuAsync(TimeSpan timeout, CancellationTokenSource cts)
+        private async Task OpenWonderPickMenuAsync(TimeSpan timeout, CancellationTokenSource parentCts)
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
-            cts.CancelAfter(timeout);
+            var childCts = CancellationTokenSource.CreateLinkedTokenSource(parentCts.Token);
+            childCts.CancelAfter(timeout);
             while (true)
             {
-                cts.Token.ThrowIfCancellationRequested();
+                childCts.Token.ThrowIfCancellationRequested();
                 OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
                 var searchWonderPickMenuResult = ImageProcessing.SearchWonderPickMenu(image);
                 if (searchWonderPickMenuResult.HasValue)
@@ -148,16 +151,17 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                     (double alpha, Point location) = searchWonderPickButtonResult.Value;
                     Logger.Log(Logger.LogLevel.Info, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
                     await adbClient.ClickAsync(deviceData, location);
-                    await Task.Delay(TimeSpan.FromSeconds(1), cts.Token);
+                    await Task.Delay(TimeSpan.FromSeconds(1), childCts.Token);
                 }
-                await Task.Delay(TimeSpan.FromMilliseconds(100), cts.Token);
+                await Task.Delay(TimeSpan.FromMilliseconds(100), childCts.Token);
             }
         }
 
-        private async Task ClickOKAsync(TimeSpan timeout, CancellationTokenSource cts)
+        private async Task ClickOKAsync(TimeSpan timeout, CancellationTokenSource parentCts)
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
-            cts.CancelAfter(timeout);
+            var childCts = CancellationTokenSource.CreateLinkedTokenSource(parentCts.Token);
+            childCts.CancelAfter(timeout);
             while (true)
             {
                 cts.Token.ThrowIfCancellationRequested();
@@ -176,9 +180,9 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                     (double alpha, Point location) = searchOkResult.Value;
                     Logger.Log(Logger.LogLevel.Info, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
                     await adbClient.ClickAsync(deviceData, location);
-                    await Task.Delay(TimeSpan.FromSeconds(1), cts.Token);
+                    await Task.Delay(TimeSpan.FromSeconds(1), childCts.Token);
                 }
-                await Task.Delay(TimeSpan.FromMilliseconds(100), cts.Token);
+                await Task.Delay(TimeSpan.FromMilliseconds(100), childCts.Token);
             }
         }
 
@@ -196,20 +200,21 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             }
         }
 
-        protected async Task ReturnToMainMenuAsync(TimeSpan timeout, CancellationTokenSource cts)
+        protected async Task ReturnToMainMenuAsync(TimeSpan timeout, CancellationTokenSource parentCts)
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
-            cts.CancelAfter(timeout);
+            var childCts = CancellationTokenSource.CreateLinkedTokenSource(parentCts.Token);
+            childCts.CancelAfter(timeout);
             while (true)
             {
-                cts.Token.ThrowIfCancellationRequested();
+                childCts.Token.ThrowIfCancellationRequested();
                 OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
                 var mainMenuResult = ImageProcessing.SearchWonderPickButton(image);
                 if (mainMenuResult.HasValue)
                 {
                     (double alpha, Point location) = mainMenuResult.Value;
                     Logger.Log(Logger.LogLevel.Info, LogHeader, $"Found in location:{location} (alpha:{alpha})");
-                    await Task.Delay(TimeSpan.FromSeconds(10), cts.Token);
+                    await Task.Delay(TimeSpan.FromSeconds(10), childCts.Token);
                     break;
                 }
 
@@ -219,12 +224,12 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                     (double alpha, Point location) = registernewCardResult.Value;
                     Logger.Log(Logger.LogLevel.Info, LogHeader, $"Clicking on location:{location} (alpha:{alpha})");
                     await adbClient.ClickAsync(deviceData, location);
-                    await Task.Delay(TimeSpan.FromSeconds(1), cts.Token);
+                    await Task.Delay(TimeSpan.FromSeconds(1), childCts.Token);
                 }
 
                 Logger.Log(Logger.LogLevel.Info, LogHeader, "Going back");
                 await adbClient.ClickBackButtonAsync(deviceData);
-                await Task.Delay(TimeSpan.FromSeconds(1), cts.Token);
+                await Task.Delay(TimeSpan.FromSeconds(1), childCts.Token);
             }
         }
 
