@@ -1,4 +1,5 @@
-﻿using AdvancedSharpAdbClient.Models;
+﻿using AdvancedSharpAdbClient.Exceptions;
+using AdvancedSharpAdbClient.Models;
 
 namespace TCGPocketAutomation.TCGPocketAutomation
 {
@@ -40,61 +41,58 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             semaphore = new SemaphoreSlim(maxParallelInstance, maxParallelInstance);
         }
 
-        protected override async Task ConnectToADBInstanceAsync(CancellationTokenSource cts)
+        protected override async Task ConnectToADBInstanceAsync(CancellationToken token)
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Waiting for a semaphore ({semaphore.CurrentCount} available)");
-            await semaphore.WaitAsync(cts.Token);
+            await semaphore.WaitAsync(token);
             semaphoreToRelease = true;
-            cts.Token.ThrowIfCancellationRequested();
+            token.ThrowIfCancellationRequested();
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({semaphore.CurrentCount} available)");
 
             Utils.ExecuteCmd($"HD-Player.exe --instance {BluestacksName} --cmd launchAppWithBsx --package jp.pokemon.pokemontcgp");
-            await Task.Delay(TimeSpan.FromMinutes(1), cts.Token);
-            string resultConnect = adbClient.Connect(IP, Port);
+            await Task.Delay(TimeSpan.FromMinutes(1), token);
+            string resultConnect = await adbClient.ConnectAsync(IP, Port, token);
             if (resultConnect != $"connected to {IP}:{Port}" &&
                 resultConnect != $"already connected to {IP}:{Port}")
             {
                 throw new Exception(resultConnect);
             }
-            DeviceData? device = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}");
-            deviceData = device.Value;
-            await Task.Delay(TimeSpan.FromSeconds(30), cts.Token);
-            await WaitForTileScreenAsync(TimeSpan.FromMinutes(2), cts);
-            await GoPastTileScreenAsync(TimeSpan.FromSeconds(30), cts);
-            await ReturnToMainMenuAsync(TimeSpan.FromSeconds(30), cts);
+            deviceData = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}", TimeSpan.FromMinutes(1), token);
+            await Task.Delay(TimeSpan.FromSeconds(30), token);
+            await WaitForTileScreenAsync(TimeSpan.FromMinutes(2), token);
+            await GoPastTileScreenAsync(TimeSpan.FromSeconds(30), token);
+            await ReturnToMainMenuAsync(TimeSpan.FromSeconds(30), token);
         }
 
-        protected override Task DisconnectFromADBInstanceAsync()
+        protected override async Task DisconnectFromADBInstanceAsync(CancellationToken token)
         {
 
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             if (!semaphoreToRelease)
             {
                 Logger.Log(Logger.LogLevel.Info, LogHeader, $"No semaphore to release ({semaphore.CurrentCount} available)");
-                return Task.CompletedTask;
+                return;
             }
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"One semaphore to release ({semaphore.CurrentCount} available)");
             semaphoreToRelease = false;
 
-            deviceData = new DeviceData();
             try
             {
-                adbClient.Disconnect(IP, Port);
+                await adbClient.DisconnectAsync(IP, Port, token);
             }
-            catch (Exception exception)
+            catch (AdbException exception)
             {
                 Logger.Log(Logger.LogLevel.Warning, LogHeader, $"<@{SettingsManager.Settings.DiscordUserId}> An exception has been raised:{exception}");
             }
             finally
             {
+                deviceData = new DeviceData();
                 Utils.ExecuteCmd($"taskkill /fi \"WINDOWTITLE eq {Name}\" /IM \"HD-Player.exe\" /F");
 
                 Logger.Log(Logger.LogLevel.Info, LogHeader, $"Releasing a semaphore ({semaphore.CurrentCount} available)");
                 semaphore.Release();
             }
-
-            return Task.CompletedTask;
         }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.Models;
 using System.Diagnostics;
+using System.Threading;
 
 namespace TCGPocketAutomation.TCGPocketAutomation
 {
@@ -18,16 +19,23 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             process.Start();
         }
 
-        public static async Task<DeviceData?> GetDeviceDataFromAsync(AdbClient adbClient, string key)
+        public static async Task<DeviceData> GetDeviceDataFromAsync(AdbClient adbClient, string key, TimeSpan timeout, CancellationToken parentToken)
         {
-            foreach (DeviceData device in await adbClient.GetDevicesAsync())
+            using var timeoutCts = new CancellationTokenSource(timeout);
+            using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(parentToken, timeoutCts.Token);
+
+            while (true)
             {
-                if (device.Serial == key)
+                linkedCts.Token.ThrowIfCancellationRequested();
+
+                foreach (DeviceData device in await adbClient.GetDevicesAsync())
                 {
-                    return device;
+                    if (device.Serial == key)
+                    {
+                        return device;
+                    }
                 }
             }
-            return null;
         }
 
         public static void StartADBServer()

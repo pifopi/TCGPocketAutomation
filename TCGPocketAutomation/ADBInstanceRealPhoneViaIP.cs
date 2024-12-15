@@ -1,4 +1,5 @@
 ﻿using AdvancedSharpAdbClient.Models;
+using System.Threading;
 
 namespace TCGPocketAutomation.TCGPocketAutomation
 {
@@ -26,34 +27,32 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             get => $"{Name}\t{IP}:{Port}";
         }
 
-        protected override async Task ConnectToADBInstanceAsync(CancellationTokenSource cts)
+        protected override async Task ConnectToADBInstanceAsync(CancellationToken token)
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
-            string resultConnect = adbClient.Connect(IP, Port);
+            string resultConnect = await adbClient.ConnectAsync(IP, Port, token);
             if (resultConnect != $"connected to {IP}:{Port}" &&
                 resultConnect != $"already connected to {IP}:{Port}")
             {
                 throw new Exception(resultConnect);
             }
             needToDisconnect = true;
-            DeviceData? device = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}");
+            DeviceData? device = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}", TimeSpan.FromMinutes(1), token);
             deviceData = device.Value;
-            await Task.Delay(TimeSpan.FromSeconds(10), cts.Token);
+            await Task.Delay(TimeSpan.FromSeconds(10), token);
         }
 
-        protected override Task DisconnectFromADBInstanceAsync()
+        protected override async Task DisconnectFromADBInstanceAsync(CancellationToken token)
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             if (!needToDisconnect)
             {
-                return Task.CompletedTask;
+                return;
             }
             needToDisconnect = false;
 
             deviceData = new DeviceData();
-            adbClient.Disconnect(IP, Port);
-
-            return Task.CompletedTask;
+            await adbClient.DisconnectAsync(IP, Port, token);
         }
     }
 }

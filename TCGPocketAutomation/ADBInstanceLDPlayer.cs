@@ -32,35 +32,24 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             semaphore = new SemaphoreSlim(maxParallelInstance, maxParallelInstance);
         }
 
-        protected override async Task ConnectToADBInstanceAsync(CancellationTokenSource parentCts)
+        protected override async Task ConnectToADBInstanceAsync(CancellationToken token)
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Waiting for a semaphore ({semaphore.CurrentCount} available)");
-            await semaphore.WaitAsync(parentCts.Token);
+            await semaphore.WaitAsync(token);
             semaphoreToRelease = true;
-            parentCts.Token.ThrowIfCancellationRequested();
+            token.ThrowIfCancellationRequested();
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({semaphore.CurrentCount} available)");
 
             Utils.ExecuteCmd($"ldconsole.exe launchex --name {LDPlayerName} --packagename jp.pokemon.pokemontcgp");
-            var childCts = CancellationTokenSource.CreateLinkedTokenSource(parentCts.Token);
-            //childCts.CancelAfter(TimeSpan.FromMinutes(1));
-            while (true)
-            {
-                childCts.Token.ThrowIfCancellationRequested();
-                DeviceData? device = await Utils.GetDeviceDataFromAsync(adbClient, ADBName);
-                if (device.HasValue)
-                {
-                    deviceData = device.Value;
-                    break;
-                }
-            }
-            await Task.Delay(TimeSpan.FromSeconds(30), parentCts.Token);
-            await WaitForTileScreenAsync(TimeSpan.FromMinutes(2), parentCts);
-            await GoPastTileScreenAsync(TimeSpan.FromSeconds(30), parentCts);
-            await ReturnToMainMenuAsync(TimeSpan.FromSeconds(30), parentCts);
+            deviceData = await Utils.GetDeviceDataFromAsync(adbClient, ADBName, TimeSpan.FromMinutes(1), token);
+            await Task.Delay(TimeSpan.FromSeconds(30), token);
+            await WaitForTileScreenAsync(TimeSpan.FromMinutes(2), token);
+            await GoPastTileScreenAsync(TimeSpan.FromSeconds(30), token);
+            await ReturnToMainMenuAsync(TimeSpan.FromSeconds(30), token);
         }
 
-        protected override Task DisconnectFromADBInstanceAsync()
+        protected override Task DisconnectFromADBInstanceAsync(CancellationToken token)
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             if (!semaphoreToRelease)
