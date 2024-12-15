@@ -1,7 +1,6 @@
 ﻿using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.Models;
 using System.Diagnostics;
-using System.Threading;
 
 namespace TCGPocketAutomation.TCGPocketAutomation
 {

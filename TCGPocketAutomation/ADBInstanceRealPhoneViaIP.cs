@@ -1,5 +1,4 @@
 ﻿using AdvancedSharpAdbClient.Models;
-using System.Threading;
 
 namespace TCGPocketAutomation.TCGPocketAutomation
 {
@@ -37,8 +36,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                 throw new Exception(resultConnect);
             }
             needToDisconnect = true;
-            DeviceData? device = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}", TimeSpan.FromMinutes(1), token);
-            deviceData = device.Value;
+            deviceData = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}", TimeSpan.FromMinutes(1), token);
             await Task.Delay(TimeSpan.FromSeconds(10), token);
         }
 

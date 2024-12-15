@@ -1,5 +1,5 @@
-﻿using NLog.Config;
-using NLog;
+﻿using NLog;
+using NLog.Config;
 using System.Collections.ObjectModel;
 using System.Windows;
 

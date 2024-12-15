@@ -280,10 +280,10 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             {
                 try
                 {
-                    using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(programCts.Token);
-                    await ConnectToADBInstanceAsync(linkedCts.Token);
-                    await CheckWonderPickOnceAsync(linkedCts.Token);
-                    await Task.Delay(TimeSpan.FromMinutes(15), linkedCts.Token);
+                    await ConnectToADBInstanceAsync(programCts.Token);
+                    await CheckWonderPickOnceAsync(programCts.Token);
+                    await DisconnectFromADBInstanceAsync(programCts.Token);
+                    await Task.Delay(TimeSpan.FromMinutes(15), programCts.Token);
                 }
                 catch (Exception exception)
                 {
@@ -301,9 +301,8 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             StartProgram(StatusEnum.CheckWonderPickOnce, "CheckWonderPickOnce");
             try
             {
-                using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(programCts.Token);
-                await ConnectToADBInstanceAsync(linkedCts.Token);
-                await CheckWonderPickOnceAsync(linkedCts.Token);
+                await ConnectToADBInstanceAsync(programCts.Token);
+                await CheckWonderPickOnceAsync(programCts.Token);
             }
             catch (Exception exception)
             {
