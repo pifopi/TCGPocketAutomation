@@ -78,11 +78,21 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             semaphoreToRelease = false;
 
             deviceData = new DeviceData();
-            adbClient.Disconnect(IP, Port);
-            Utils.ExecuteCmd($"taskkill /fi \"WINDOWTITLE eq {Name}\" /IM \"HD-Player.exe\" /F");
+            try
+            {
+                adbClient.Disconnect(IP, Port);
+            }
+            catch (Exception exception)
+            {
+                Logger.Log(Logger.LogLevel.Warning, LogHeader, $"<@{SettingsManager.Settings.DiscordUserId}> An exception has been raised:{exception}");
+            }
+            finally
+            {
+                Utils.ExecuteCmd($"taskkill /fi \"WINDOWTITLE eq {Name}\" /IM \"HD-Player.exe\" /F");
 
-            Logger.Log(Logger.LogLevel.Info, LogHeader, $"Releasing a semaphore ({semaphore.CurrentCount} available)");
-            semaphore.Release();
+                Logger.Log(Logger.LogLevel.Info, LogHeader, $"Releasing a semaphore ({semaphore.CurrentCount} available)");
+                semaphore.Release();
+            }
 
             return Task.CompletedTask;
         }

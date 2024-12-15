@@ -43,7 +43,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
 
             Utils.ExecuteCmd($"ldconsole.exe launchex --name {LDPlayerName} --packagename jp.pokemon.pokemontcgp");
             var childCts = CancellationTokenSource.CreateLinkedTokenSource(parentCts.Token);
-            childCts.CancelAfter(TimeSpan.FromMinutes(1));
+            //childCts.CancelAfter(TimeSpan.FromMinutes(1));
             while (true)
             {
                 childCts.Token.ThrowIfCancellationRequested();
