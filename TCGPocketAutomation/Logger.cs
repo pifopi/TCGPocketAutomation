@@ -49,7 +49,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             this.methodName = methodName;
         }
 
-        public override void Dispose()
+        public void Dispose()
         {
             Logger.Log(logLevel, header, "", $"{methodName} End");
         }
