@@ -47,10 +47,11 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             {
                 return;
             }
-            needToDisconnect = false;
 
             deviceData = new DeviceData();
             await adbClient.DisconnectAsync(IP, Port);
+            await Task.Delay(TimeSpan.FromSeconds(10));
+            needToDisconnect = false;
         }
     }
 }

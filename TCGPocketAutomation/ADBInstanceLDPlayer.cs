@@ -48,24 +48,23 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             await ReturnToMainMenuAsync(TimeSpan.FromSeconds(30), token);
         }
 
-        protected override Task DisconnectFromADBInstanceAsync()
+        protected override async Task DisconnectFromADBInstanceAsync()
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             if (!semaphoreToRelease)
             {
                 Logger.Log(Logger.LogLevel.Info, LogHeader, $"No semaphore to release ({semaphore.CurrentCount} available)");
-                return Task.CompletedTask;
+                return;
             }
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"One semaphore to release ({semaphore.CurrentCount} available)");
             semaphoreToRelease = false;
 
             deviceData = new DeviceData();
             Utils.ExecuteCmd($"ldconsole.exe quit --name {LDPlayerName}");
+            await Task.Delay(TimeSpan.FromSeconds(10));
 
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Releasing a semaphore ({semaphore.CurrentCount} available)");
             semaphore.Release();
-
-            return Task.CompletedTask;
         }
     }
 }

@@ -78,20 +78,12 @@ namespace TCGPocketAutomation.TCGPocketAutomation
 
         public async void CheckWonderPickPeriodically(object sender, RoutedEventArgs e)
         {
-            ADBInstance instance = AsADBInstance(sender);
-            await Task.Run(async () =>
-            {
-                await instance.StartCheckWonderPickPeriodicallyAsync();
-            });
+            await Task.Run(AsADBInstance(sender).StartCheckWonderPickPeriodicallyAsync);
         }
 
         public async void CheckWonderPickOnce(object sender, RoutedEventArgs e)
         {
-            ADBInstance instance = AsADBInstance(sender);
-            await Task.Run(async () =>
-            {
-                await instance.StartCheckWonderPickOnceAsync();
-            });
+            await Task.Run(AsADBInstance(sender).StartCheckWonderPickOnceAsync);
         }
     }
 }

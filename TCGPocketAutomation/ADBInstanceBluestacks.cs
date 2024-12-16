@@ -89,6 +89,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             {
                 deviceData = new DeviceData();
                 Utils.ExecuteCmd($"taskkill /fi \"WINDOWTITLE eq {Name}\" /IM \"HD-Player.exe\" /F");
+                await Task.Delay(TimeSpan.FromSeconds(10));
 
                 Logger.Log(Logger.LogLevel.Info, LogHeader, $"Releasing a semaphore ({semaphore.CurrentCount} available)");
                 semaphore.Release();
