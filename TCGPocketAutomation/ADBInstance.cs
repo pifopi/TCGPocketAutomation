@@ -78,9 +78,9 @@ namespace TCGPocketAutomation.TCGPocketAutomation
 
         protected abstract Task ConnectToADBInstanceAsync(CancellationToken token);
 
-        protected abstract Task DisconnectFromADBInstanceAsync(CancellationToken token);
+        protected abstract Task DisconnectFromADBInstanceAsync();
 
-        protected async Task WaitForTileScreenAsync(TimeSpan timeout, CancellationToken parentToken)
+        protected async Task WaitForTitleScreenAsync(TimeSpan timeout, CancellationToken parentToken)
         {
             using var timeoutCts = new CancellationTokenSource(timeout);
             using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(parentToken, timeoutCts.Token);
@@ -104,7 +104,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             }
         }
 
-        protected async Task GoPastTileScreenAsync(TimeSpan timeout, CancellationToken parentToken)
+        protected async Task GoPastTitleScreenAsync(TimeSpan timeout, CancellationToken parentToken)
         {
             using var timeoutCts = new CancellationTokenSource(timeout);
             using var linkedCts = CancellationTokenSource.CreateLinkedTokenSource(parentToken, timeoutCts.Token);
@@ -282,16 +282,13 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                 {
                     await ConnectToADBInstanceAsync(programCts.Token);
                     await CheckWonderPickOnceAsync(programCts.Token);
-                    await DisconnectFromADBInstanceAsync(programCts.Token);
+                    await DisconnectFromADBInstanceAsync();
                     await Task.Delay(TimeSpan.FromMinutes(15), programCts.Token);
                 }
                 catch (Exception exception)
                 {
                     Logger.Log(Logger.LogLevel.Warning, LogHeader, $"<@{SettingsManager.Settings.DiscordUserId}> An exception has been raised:{exception}");
-                }
-                finally
-                {
-                    await DisconnectFromADBInstanceAsync(programCts.Token);
+                    await DisconnectFromADBInstanceAsync();
                 }
             }
         }
@@ -310,7 +307,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             }
             finally
             {
-                await DisconnectFromADBInstanceAsync(programCts.Token);
+                await DisconnectFromADBInstanceAsync();
                 StopProgram();
             }
         }

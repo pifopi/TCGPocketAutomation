@@ -43,12 +43,12 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             Utils.ExecuteCmd($"ldconsole.exe launchex --name {LDPlayerName} --packagename jp.pokemon.pokemontcgp");
             deviceData = await Utils.GetDeviceDataFromAsync(adbClient, ADBName, TimeSpan.FromMinutes(1), token);
             await Task.Delay(TimeSpan.FromSeconds(30), token);
-            await WaitForTileScreenAsync(TimeSpan.FromMinutes(2), token);
-            await GoPastTileScreenAsync(TimeSpan.FromSeconds(30), token);
+            await WaitForTitleScreenAsync(TimeSpan.FromMinutes(2), token);
+            await GoPastTitleScreenAsync(TimeSpan.FromSeconds(30), token);
             await ReturnToMainMenuAsync(TimeSpan.FromSeconds(30), token);
         }
 
-        protected override Task DisconnectFromADBInstanceAsync(CancellationToken token)
+        protected override Task DisconnectFromADBInstanceAsync()
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             if (!semaphoreToRelease)

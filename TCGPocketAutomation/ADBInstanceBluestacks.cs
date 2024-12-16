@@ -60,12 +60,12 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             }
             deviceData = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}", TimeSpan.FromMinutes(1), token);
             await Task.Delay(TimeSpan.FromSeconds(30), token);
-            await WaitForTileScreenAsync(TimeSpan.FromMinutes(2), token);
-            await GoPastTileScreenAsync(TimeSpan.FromSeconds(30), token);
+            await WaitForTitleScreenAsync(TimeSpan.FromMinutes(2), token);
+            await GoPastTitleScreenAsync(TimeSpan.FromSeconds(30), token);
             await ReturnToMainMenuAsync(TimeSpan.FromSeconds(30), token);
         }
 
-        protected override async Task DisconnectFromADBInstanceAsync(CancellationToken token)
+        protected override async Task DisconnectFromADBInstanceAsync()
         {
 
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
@@ -79,7 +79,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
 
             try
             {
-                await adbClient.DisconnectAsync(IP, Port, token);
+                await adbClient.DisconnectAsync(IP, Port);
             }
             catch (AdbException exception)
             {

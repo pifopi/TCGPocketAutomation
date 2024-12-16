@@ -40,7 +40,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             await Task.Delay(TimeSpan.FromSeconds(10), token);
         }
 
-        protected override async Task DisconnectFromADBInstanceAsync(CancellationToken token)
+        protected override async Task DisconnectFromADBInstanceAsync()
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             if (!needToDisconnect)
@@ -50,7 +50,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             needToDisconnect = false;
 
             deviceData = new DeviceData();
-            await adbClient.DisconnectAsync(IP, Port, token);
+            await adbClient.DisconnectAsync(IP, Port);
         }
     }
 }
