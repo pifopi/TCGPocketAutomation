@@ -9,9 +9,9 @@ namespace TCGPocketAutomation.TCGPocketAutomation
         private int _port = 5555;
         private string _blueStacksName = "Pie64";
 
-        private static SemaphoreSlim blueStacksSemaphore = new(0, 1);
+        private static SemaphoreSlim emulatorSemaphore = new(0, 1);
 
-        private bool blueStacksSemaphoreToRelease = false;
+        private bool hasTakenEmulatorSemaphore = false;
 
         public string IP
         {
@@ -38,18 +38,18 @@ namespace TCGPocketAutomation.TCGPocketAutomation
 
         public static void SetMaxParallelInstance(int maxParallelInstance)
         {
-            blueStacksSemaphore = new SemaphoreSlim(maxParallelInstance, maxParallelInstance);
+            emulatorSemaphore = new SemaphoreSlim(maxParallelInstance, maxParallelInstance);
         }
 
         protected override async Task ConnectToADBInstanceAsync(CancellationToken token)
         {
             await base.ConnectToADBInstanceAsync(token);
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
-            Logger.Log(Logger.LogLevel.Info, LogHeader, $"Waiting for a semaphore ({blueStacksSemaphore.CurrentCount} available)");
-            await blueStacksSemaphore.WaitAsync(token);
-            blueStacksSemaphoreToRelease = true;
+            Logger.Log(Logger.LogLevel.Info, LogHeader, $"Waiting for a semaphore ({emulatorSemaphore.CurrentCount} available)");
+            await emulatorSemaphore.WaitAsync(token);
+            hasTakenEmulatorSemaphore = true;
             token.ThrowIfCancellationRequested();
-            Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({blueStacksSemaphore.CurrentCount} available)");
+            Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({emulatorSemaphore.CurrentCount} available)");
 
             Utils.ExecuteCmd($"HD-Player.exe --instance {BlueStacksName} --cmd launchAppWithBsx --package jp.pokemon.pokemontcgp");
             await Task.Delay(TimeSpan.FromMinutes(1), token);
@@ -70,14 +70,14 @@ namespace TCGPocketAutomation.TCGPocketAutomation
         {
 
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
-            if (!blueStacksSemaphoreToRelease)
+            if (!hasTakenEmulatorSemaphore)
             {
-                Logger.Log(Logger.LogLevel.Info, LogHeader, $"No semaphore to release ({blueStacksSemaphore.CurrentCount} available)");
+                Logger.Log(Logger.LogLevel.Info, LogHeader, $"No semaphore to release ({emulatorSemaphore.CurrentCount} available)");
                 return;
             }
 
-            Logger.Log(Logger.LogLevel.Info, LogHeader, $"One semaphore to release ({blueStacksSemaphore.CurrentCount} available)");
-            blueStacksSemaphoreToRelease = false;
+            Logger.Log(Logger.LogLevel.Info, LogHeader, $"One semaphore to release ({emulatorSemaphore.CurrentCount} available)");
+            hasTakenEmulatorSemaphore = false;
 
             try
             {
@@ -93,8 +93,8 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                 Utils.ExecuteCmd($"taskkill /fi \"WINDOWTITLE eq {Name}\" /IM \"HD-Player.exe\" /F");
                 await Task.Delay(TimeSpan.FromSeconds(10));
 
-                Logger.Log(Logger.LogLevel.Info, LogHeader, $"Releasing a semaphore ({blueStacksSemaphore.CurrentCount} available)");
-                blueStacksSemaphore.Release();
+                Logger.Log(Logger.LogLevel.Info, LogHeader, $"Releasing a semaphore ({emulatorSemaphore.CurrentCount} available)");
+                emulatorSemaphore.Release();
                 await base.DisconnectFromADBInstanceAsync();
             }
         }

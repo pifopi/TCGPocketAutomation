@@ -6,9 +6,9 @@ namespace TCGPocketAutomation.TCGPocketAutomation
     {
         private string _adbName = "emulator-5555";
 
-        private static SemaphoreSlim lDPlayerSemaphore = new(0, 1);
+        private static SemaphoreSlim emulatorSemaphore = new(0, 1);
 
-        private bool lDPlayerSemaphoreToRelease = false;
+        private bool hasTakenEmulatorSemaphore = false;
 
         public string ADBName
         {
@@ -28,18 +28,18 @@ namespace TCGPocketAutomation.TCGPocketAutomation
 
         public static void SetMaxParallelInstance(int maxParallelInstance)
         {
-            lDPlayerSemaphore = new SemaphoreSlim(maxParallelInstance, maxParallelInstance);
+            emulatorSemaphore = new SemaphoreSlim(maxParallelInstance, maxParallelInstance);
         }
 
         protected override async Task ConnectToADBInstanceAsync(CancellationToken token)
         {
             await base.ConnectToADBInstanceAsync(token);
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
-            Logger.Log(Logger.LogLevel.Info, LogHeader, $"Waiting for a semaphore ({lDPlayerSemaphore.CurrentCount} available)");
-            await lDPlayerSemaphore.WaitAsync(token);
-            lDPlayerSemaphoreToRelease = true;
+            Logger.Log(Logger.LogLevel.Info, LogHeader, $"Waiting for a semaphore ({emulatorSemaphore.CurrentCount} available)");
+            await emulatorSemaphore.WaitAsync(token);
+            hasTakenEmulatorSemaphore = true;
             token.ThrowIfCancellationRequested();
-            Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({lDPlayerSemaphore.CurrentCount} available)");
+            Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({emulatorSemaphore.CurrentCount} available)");
 
             Utils.ExecuteCmd($"ldconsole.exe launchex --name {LDPlayerName} --packagename jp.pokemon.pokemontcgp");
             deviceData = await Utils.GetDeviceDataFromAsync(adbClient, ADBName, TimeSpan.FromMinutes(1), token);
@@ -52,21 +52,21 @@ namespace TCGPocketAutomation.TCGPocketAutomation
         protected override async Task DisconnectFromADBInstanceAsync()
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
-            if (!lDPlayerSemaphoreToRelease)
+            if (!hasTakenEmulatorSemaphore)
             {
-                Logger.Log(Logger.LogLevel.Info, LogHeader, $"No semaphore to release ({lDPlayerSemaphore.CurrentCount} available)");
+                Logger.Log(Logger.LogLevel.Info, LogHeader, $"No semaphore to release ({emulatorSemaphore.CurrentCount} available)");
                 return;
             }
 
-            Logger.Log(Logger.LogLevel.Info, LogHeader, $"One semaphore to release ({lDPlayerSemaphore.CurrentCount} available)");
-            lDPlayerSemaphoreToRelease = false;
+            Logger.Log(Logger.LogLevel.Info, LogHeader, $"One semaphore to release ({emulatorSemaphore.CurrentCount} available)");
+            hasTakenEmulatorSemaphore = false;
 
             deviceData = new DeviceData();
             Utils.ExecuteCmd($"ldconsole.exe quit --name {LDPlayerName}");
             await Task.Delay(TimeSpan.FromSeconds(10));
 
-            Logger.Log(Logger.LogLevel.Info, LogHeader, $"Releasing a semaphore ({lDPlayerSemaphore.CurrentCount} available)");
-            lDPlayerSemaphore.Release();
+            Logger.Log(Logger.LogLevel.Info, LogHeader, $"Releasing a semaphore ({emulatorSemaphore.CurrentCount} available)");
+            emulatorSemaphore.Release();
             await base.DisconnectFromADBInstanceAsync();
         }
     }

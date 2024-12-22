@@ -8,7 +8,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
         private string _ip = "127.0.0.1";
         private int _port = 5555;
 
-        private bool needToDisconnect = false;
+        private bool isConnected = false;
 
         public string IP
         {
@@ -37,7 +37,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             {
                 throw new Exception(resultConnect);
             }
-            needToDisconnect = true;
+            isConnected = true;
             deviceData = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}", TimeSpan.FromMinutes(1), token);
             await Task.Delay(TimeSpan.FromSeconds(10), token);
         }
@@ -45,7 +45,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
         protected override async Task DisconnectFromADBInstanceAsync()
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
-            if (!needToDisconnect)
+            if (!isConnected)
             {
                 return;
             }
@@ -62,7 +62,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             {
                 deviceData = new DeviceData();
                 await Task.Delay(TimeSpan.FromSeconds(10));
-                needToDisconnect = false;
+                isConnected = false;
                 await base.DisconnectFromADBInstanceAsync();
             }
         }
