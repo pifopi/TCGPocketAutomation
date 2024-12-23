@@ -71,19 +71,14 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             return (ADBInstance)frameworkElement.DataContext;
         }
 
-        public void Stop(object sender, RoutedEventArgs e)
+        public void StartProgram(object sender, RoutedEventArgs e)
+        {
+            AsADBInstance(sender).StartProgram();
+        }
+
+        public void StopProgram(object sender, RoutedEventArgs e)
         {
             AsADBInstance(sender).StopProgram();
-        }
-
-        public async void CheckWonderPickPeriodically(object sender, RoutedEventArgs e)
-        {
-            await Task.Run(AsADBInstance(sender).StartCheckWonderPickPeriodicallyAsync);
-        }
-
-        public async void CheckWonderPickOnce(object sender, RoutedEventArgs e)
-        {
-            await Task.Run(AsADBInstance(sender).StartCheckWonderPickOnceAsync);
         }
     }
 }

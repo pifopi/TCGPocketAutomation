@@ -16,29 +16,29 @@
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
-                    <DataGridTextColumn Header="Status" Binding="{Binding Status, Mode=OneWay}" />
-                    <DataGridTextColumn Header="BlueStacksName" Binding="{Binding BlueStacksName}" />
-                    <DataGridTextColumn Header="Ip" Binding="{Binding IP}" />
-                    <DataGridTextColumn Header="Port" Binding="{Binding Port}" />
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" />
+                    <DataGridTextColumn Header="BlueStacks Name" Binding="{Binding BlueStacksName, Mode=OneWay}" />
+                    <DataGridTextColumn Header="Ip" Binding="{Binding IP, Mode=OneWay}" />
+                    <DataGridTextColumn Header="Port" Binding="{Binding Port, Mode=OneWay}" />
+                    <DataGridTextColumn Header="Is Running" Binding="{Binding IsRunning, Mode=OneWay}" />
+                    <DataGridTemplateColumn Header="Selected Program">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox ItemsSource="{Binding ProgramList}" SelectedItem="{Binding SelectedProgram, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsNotRunning}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Start">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Execute" Click="StartProgram" IsEnabled="{Binding IsNotRunning}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Stop">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="Execute" Click="Stop" IsEnabled="{Binding IsRunning, Mode=OneWay}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Check wonder pick periodically">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="Execute" Click="CheckWonderPickPeriodically" IsEnabled="{Binding IsNotRunning, Mode=OneWay}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Check wonder pick once">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="Execute" Click="CheckWonderPickOnce" IsEnabled="{Binding IsNotRunning, Mode=OneWay}" />
+                                <Button Content="Execute" Click="StopProgram" IsEnabled="{Binding IsRunning}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -55,27 +55,27 @@
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
-                    <DataGridTextColumn Header="Status" Binding="{Binding Status, Mode=OneWay}" />
-                    <DataGridTextColumn Header="ADBName" Binding="{Binding ADBName}" />
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" />
+                    <DataGridTextColumn Header="ADB Name" Binding="{Binding ADBName, Mode=OneWay}" />
+                    <DataGridTextColumn Header="Is Running" Binding="{Binding IsRunning, Mode=OneWay}" />
+                    <DataGridTemplateColumn Header="Selected Program">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox ItemsSource="{Binding ProgramList}" SelectedItem="{Binding SelectedProgram, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsNotRunning}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Start">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Execute" Click="StartProgram" IsEnabled="{Binding IsNotRunning}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Stop">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="Execute" Click="Stop" IsEnabled="{Binding IsRunning, Mode=OneWay}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Check wonder pick periodically">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="Execute" Click="CheckWonderPickPeriodically" IsEnabled="{Binding IsNotRunning, Mode=OneWay}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Check wonder pick once">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="Execute" Click="CheckWonderPickOnce" IsEnabled="{Binding IsNotRunning, Mode=OneWay}" />
+                                <Button Content="Execute" Click="StopProgram" IsEnabled="{Binding IsRunning}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>
@@ -92,28 +92,28 @@
                 HorizontalAlignment="Stretch"
                 VerticalAlignment="Stretch">
                 <DataGrid.Columns>
-                    <DataGridTextColumn Header="Name" Binding="{Binding Name}" />
-                    <DataGridTextColumn Header="Status" Binding="{Binding Status, Mode=OneWay}" />
-                    <DataGridTextColumn Header="Ip" Binding="{Binding IP}" />
-                    <DataGridTextColumn Header="Port" Binding="{Binding Port}" />
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" />
+                    <DataGridTextColumn Header="Ip" Binding="{Binding IP, Mode=OneWay}" />
+                    <DataGridTextColumn Header="Port" Binding="{Binding Port, Mode=OneWay}" />
+                    <DataGridTextColumn Header="Is Running" Binding="{Binding IsRunning, Mode=OneWay}" />
+                    <DataGridTemplateColumn Header="Selected Program">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox ItemsSource="{Binding ProgramList}" SelectedItem="{Binding SelectedProgram, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsNotRunning}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Start">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Execute" Click="StartProgram" IsEnabled="{Binding IsNotRunning}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
                     <DataGridTemplateColumn Header="Stop">
                         <DataGridTemplateColumn.CellTemplate>
                             <DataTemplate>
-                                <Button Content="Execute" Click="Stop" IsEnabled="{Binding IsRunning, Mode=OneWay}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Check wonder pick periodically">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="Execute" Click="CheckWonderPickPeriodically" IsEnabled="{Binding IsNotRunning, Mode=OneWay}" />
-                            </DataTemplate>
-                        </DataGridTemplateColumn.CellTemplate>
-                    </DataGridTemplateColumn>
-                    <DataGridTemplateColumn Header="Check wonder pick once">
-                        <DataGridTemplateColumn.CellTemplate>
-                            <DataTemplate>
-                                <Button Content="Execute" Click="CheckWonderPickOnce" IsEnabled="{Binding IsNotRunning, Mode=OneWay}" />
+                                <Button Content="Execute" Click="StopProgram" IsEnabled="{Binding IsRunning}" />
                             </DataTemplate>
                         </DataGridTemplateColumn.CellTemplate>
                     </DataGridTemplateColumn>

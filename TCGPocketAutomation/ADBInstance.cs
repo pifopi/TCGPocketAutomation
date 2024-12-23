@@ -1,6 +1,7 @@
 ﻿using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.DeviceCommands;
 using AdvancedSharpAdbClient.Models;
+using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Drawing;
 using System.Runtime.CompilerServices;
@@ -9,15 +10,15 @@ namespace TCGPocketAutomation.TCGPocketAutomation
 {
     public abstract class ADBInstance : INotifyPropertyChanged
     {
-        public enum StatusEnum
+        public enum Program
         {
-            NotRunning,
             CheckWonderPickPeriodically,
             CheckWonderPickOnce
         }
 
         private string _name = "New instance";
-        private StatusEnum _status = StatusEnum.NotRunning;
+        private bool _running = false;
+        private Program _selectedProgram = Program.CheckWonderPickPeriodically;
 
         protected AdbClient adbClient = new();
         protected DeviceData deviceData = new();
@@ -32,26 +33,28 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             set { _name = value; OnPropertyChanged(); }
         }
 
-        public StatusEnum Status
+        public bool IsRunning
         {
-            get => _status;
+            get => _running;
             set
             {
-                _status = value;
+                _running = value;
                 OnPropertyChanged();
-                OnPropertyChanged(nameof(IsRunning));
                 OnPropertyChanged(nameof(IsNotRunning));
             }
         }
 
-        public bool IsRunning
-        {
-            get => _status != StatusEnum.NotRunning;
-        }
-
         public bool IsNotRunning
         {
-            get => _status == StatusEnum.NotRunning;
+            get => !IsRunning;
+        }
+
+        public ObservableCollection<Program> ProgramList { get; set; } = new ObservableCollection<Program>(Enum.GetValues(typeof(Program)).Cast<Program>());
+
+        public Program SelectedProgram
+        {
+            get => _selectedProgram;
+            set { _selectedProgram = value; OnPropertyChanged(); }
         }
 
         protected abstract string LogHeader { get; }
@@ -63,19 +66,28 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
-        private void StartProgram(StatusEnum status, string programName)
+        public void StartProgram()
         {
-            Status = status;
+            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader, $"StartProgram {SelectedProgram}");
+            IsRunning = true;
             programCts = new CancellationTokenSource();
-            Logger.Log(Logger.LogLevel.Info, LogHeader, $"StartProgram {programName}");
+            switch (SelectedProgram)
+            {
+                case Program.CheckWonderPickPeriodically:
+                    Task.Run(StartCheckWonderPickPeriodicallyAsync);
+                    break;
+                case Program.CheckWonderPickOnce:
+                    Task.Run(StartCheckWonderPickOnceAsync);
+                    break;
+            }
         }
 
         public void StopProgram()
         {
-            using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
+            using LogContext logContext = new(Logger.LogLevel.Info, LogHeader, $"StopProgram {SelectedProgram}");
             programCts.Cancel();
             programCts.Dispose();
-            Status = StatusEnum.NotRunning;
+            IsRunning = false;
         }
 
         protected virtual async Task ConnectToADBInstanceAsync(CancellationToken token)
@@ -287,7 +299,6 @@ namespace TCGPocketAutomation.TCGPocketAutomation
 
         public async Task StartCheckWonderPickPeriodicallyAsync()
         {
-            StartProgram(StatusEnum.CheckWonderPickPeriodically, "CheckWonderPickPeriodically");
             while (!programCts.IsCancellationRequested)
             {
                 try
@@ -306,7 +317,6 @@ namespace TCGPocketAutomation.TCGPocketAutomation
 
         public async Task StartCheckWonderPickOnceAsync()
         {
-            StartProgram(StatusEnum.CheckWonderPickOnce, "CheckWonderPickOnce");
             try
             {
                 await CheckWonderPickOnceAsync(programCts.Token);
