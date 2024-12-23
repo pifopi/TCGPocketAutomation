@@ -7,7 +7,7 @@ Those are simple scripts to automate pokemon TCG pocket over adb and using open 
 # How to Set Up
 
 ## First Step
-1. Go to [this link](https://nightly.link/PokemonAutomation/TCGPocketAutomation/workflows/csharp-ci/main/TCGPocketAutomation%20for%20windows.zip) and download the file.
+1. Go to [this link](https://nightly.link/pifopi/TCGPocketAutomation/workflows/csharp-ci/main/TCGPocketAutomation%20for%20windows.zip) and download the file.
 2. Unzip the downloaded file (`TCGPocketAutomation for windows.zip`).
 3. Download and install ADB from [Android Platform Tools](https://developer.android.com/tools/releases/platform-tools#downloads).
 4. Add ADB to your system PATH.
