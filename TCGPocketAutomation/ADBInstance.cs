@@ -1,4 +1,4 @@
-using AdvancedSharpAdbClient;
+﻿using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.DeviceCommands;
 using AdvancedSharpAdbClient.Exceptions;
 using AdvancedSharpAdbClient.Models;
@@ -50,7 +50,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             get => !IsRunning;
         }
 
-        public ObservableCollection<Program> ProgramList { get; set; } = new ObservableCollection<Program>(Enum.GetValues(typeof(Program)).Cast<Program>());
+        public static ObservableCollection<Program> ProgramList { get; set; } = new ObservableCollection<Program>(Enum.GetValues(typeof(Program)).Cast<Program>());
 
         public Program SelectedProgram
         {
