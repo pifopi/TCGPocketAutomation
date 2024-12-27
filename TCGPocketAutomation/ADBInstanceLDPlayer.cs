@@ -32,7 +32,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             token.ThrowIfCancellationRequested();
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({emulatorSemaphore.CurrentCount} available)");
 
-            Utils.ExecuteCmd($"ldconsole.exe launchex --name {LDPlayerName}");
+            Utils.ExecuteCmd($"ldconsole.exe launch --name {LDPlayerName}");
             await Task.Delay(TimeSpan.FromSeconds(30), token);
         }
 

@@ -64,7 +64,7 @@
       "BlueStacksName": "Pie64_11"
     }
   ],
-  "LDPlayerMaxParallelInstance": 5,
+  "LDPlayerMaxParallelInstance": 3,
   "LDPlayerInstances": [
     {
       "Name": "Compte 01",
