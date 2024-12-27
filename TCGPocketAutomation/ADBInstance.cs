@@ -273,28 +273,27 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             }
         }
 
-        private async Task CheckWonderPickOnceAsync(CancellationToken parentToken)
+        private async Task CheckWonderPickOnceAsync(CancellationToken token)
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
-            await ConnectToADBInstanceAsync(parentToken);
-            await OpenWonderPickMenuAsync(TimeSpan.FromSeconds(30), parentToken);
+            await OpenWonderPickMenuAsync(TimeSpan.FromSeconds(30), token);
 
-            await Task.Delay(TimeSpan.FromSeconds(30), parentToken);
+            await Task.Delay(TimeSpan.FromSeconds(30), token);
             OpenCvSharp.Mat image = await Utils.GetImageAsync(adbClient, deviceData);
             var bonusWonderPickResult = ImageProcessing.SearchBonusWonderPick(image);
             if (bonusWonderPickResult.HasValue)
             {
                 (double alpha, Point location) = bonusWonderPickResult.Value;
                 Logger.Log(Logger.LogLevel.Info, LogHeader, $"Found bonus wonder pick in location:{location} (alpha:{alpha})");
-                await adbClient.ClickAsync(deviceData, location, parentToken);
+                await adbClient.ClickAsync(deviceData, location, token);
 
-                await ClickOKAsync(TimeSpan.FromSeconds(30), parentToken);
-                await Task.Delay(TimeSpan.FromSeconds(30), parentToken);
+                await ClickOKAsync(TimeSpan.FromSeconds(30), token);
+                await Task.Delay(TimeSpan.FromSeconds(30), token);
 
-                await ClickTopRightCardAsync(parentToken);
-                await Task.Delay(TimeSpan.FromSeconds(30), parentToken);
+                await ClickTopRightCardAsync(token);
+                await Task.Delay(TimeSpan.FromSeconds(30), token);
             }
-            await ReturnToMainMenuAsync(TimeSpan.FromMinutes(2), parentToken);
+            await ReturnToMainMenuAsync(TimeSpan.FromMinutes(2), token);
         }
 
         public async Task StartCheckWonderPickPeriodicallyAsync()
@@ -303,6 +302,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             {
                 try
                 {
+                    await ConnectToADBInstanceAsync(programCts.Token);
                     await CheckWonderPickOnceAsync(programCts.Token);
                     await DisconnectFromADBInstanceAsync();
                     await Task.Delay(TimeSpan.FromMinutes(15), programCts.Token);
@@ -319,6 +319,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
         {
             try
             {
+                await ConnectToADBInstanceAsync(programCts.Token);
                 await CheckWonderPickOnceAsync(programCts.Token);
             }
             catch (Exception exception)
