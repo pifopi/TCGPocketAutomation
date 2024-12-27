@@ -56,7 +56,7 @@
                 VerticalAlignment="Stretch">
                 <DataGrid.Columns>
                     <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" />
-                    <DataGridTextColumn Header="ADB Name" Binding="{Binding ADBName, Mode=OneWay}" />
+                    <DataGridTextColumn Header="Serial Name" Binding="{Binding SerialName, Mode=OneWay}" />
                     <DataGridTextColumn Header="Is Running" Binding="{Binding IsRunning, Mode=OneWay}" />
                     <DataGridTemplateColumn Header="Selected Program">
                         <DataGridTemplateColumn.CellTemplate>
