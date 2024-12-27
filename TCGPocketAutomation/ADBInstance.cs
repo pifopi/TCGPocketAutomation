@@ -1,4 +1,4 @@
-﻿using AdvancedSharpAdbClient;
+using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.DeviceCommands;
 using AdvancedSharpAdbClient.Exceptions;
 using AdvancedSharpAdbClient.Models;
@@ -18,7 +18,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
         }
 
         private string _name = "New instance";
-        private bool _running = false;
+        private bool _isRunning = false;
         private Program _selectedProgram = Program.CheckWonderPickPeriodically;
 
         protected AdbClient adbClient = new();
@@ -36,10 +36,10 @@ namespace TCGPocketAutomation.TCGPocketAutomation
 
         public bool IsRunning
         {
-            get => _running;
+            get => _isRunning;
             set
             {
-                _running = value;
+                _isRunning = value;
                 OnPropertyChanged();
                 OnPropertyChanged(nameof(IsNotRunning));
             }
