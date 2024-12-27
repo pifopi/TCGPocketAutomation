@@ -7,9 +7,9 @@
         private static readonly OpenCvSharp.Mat wonderPickButtonTemplate = OpenCvSharp.Cv2.ImRead("data/wonderPickButton.png");
         private static readonly OpenCvSharp.Mat wonderPickMenuTemplate = OpenCvSharp.Cv2.ImRead("data/wonderPickMenu.png");
         private static readonly OpenCvSharp.Mat bonusWonderPickTemplate = OpenCvSharp.Cv2.ImRead("data/bonusWonderPick.png");
-        private static readonly OpenCvSharp.Mat OKTemplate = OpenCvSharp.Cv2.ImRead("data/OK.png");
+        private static readonly OpenCvSharp.Mat OKButtonTemplate = OpenCvSharp.Cv2.ImRead("data/OKButton.png");
         private static readonly OpenCvSharp.Mat cardTemplate = OpenCvSharp.Cv2.ImRead("data/card.png");
-        private static readonly OpenCvSharp.Mat registerNewCardTemplate = OpenCvSharp.Cv2.ImRead("data/registerNewCard.png");
+        private static readonly OpenCvSharp.Mat registerNewCardButtonTemplate = OpenCvSharp.Cv2.ImRead("data/registerNewCardButton.png");
 
         private static (double, System.Drawing.Point)? Search(OpenCvSharp.Mat screen, OpenCvSharp.Mat template)
         {
@@ -51,9 +51,9 @@
             return Search(image, bonusWonderPickTemplate);
         }
 
-        public static (double, System.Drawing.Point)? SearchOK(OpenCvSharp.Mat image)
+        public static (double, System.Drawing.Point)? SearchOKButton(OpenCvSharp.Mat image)
         {
-            return Search(image, OKTemplate);
+            return Search(image, OKButtonTemplate);
         }
 
         public static (double, System.Drawing.Point)? SearchCard(OpenCvSharp.Mat image)
@@ -61,9 +61,9 @@
             return Search(image, cardTemplate);
         }
 
-        public static (double, System.Drawing.Point)? SearchRegisterNewCard(OpenCvSharp.Mat image)
+        public static (double, System.Drawing.Point)? SearchRegisterNewCardButton(OpenCvSharp.Mat image)
         {
-            return Search(image, registerNewCardTemplate);
+            return Search(image, registerNewCardButtonTemplate);
         }
     }
 }

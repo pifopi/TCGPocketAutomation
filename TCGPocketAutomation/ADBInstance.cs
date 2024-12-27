@@ -1,4 +1,4 @@
-﻿using AdvancedSharpAdbClient;
+using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.DeviceCommands;
 using AdvancedSharpAdbClient.Models;
 using System.Collections.ObjectModel;
@@ -211,7 +211,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                     return;
                 }
 
-                var searchOkResult = ImageProcessing.SearchOK(image);
+                var searchOkResult = ImageProcessing.SearchOKButton(image);
                 if (searchOkResult.HasValue)
                 {
                     (double alpha, Point location) = searchOkResult.Value;
@@ -258,7 +258,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                     break;
                 }
 
-                var registernewCardResult = ImageProcessing.SearchRegisterNewCard(image);
+                var registernewCardResult = ImageProcessing.SearchRegisterNewCardButton(image);
                 if (registernewCardResult.HasValue)
                 {
                     (double alpha, Point location) = registernewCardResult.Value;
