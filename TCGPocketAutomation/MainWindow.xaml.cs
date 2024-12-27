@@ -42,7 +42,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
                 ADBInstancesLDPlayer.Add(new ADBInstanceLDPlayer
                 {
                     Name = s.Name,
-                    ADBName = s.ADBName
+                    SerialName = s.SerialName
                 });
             }
 

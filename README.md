@@ -102,6 +102,7 @@ Those are simple scripts to automate pokemon TCG pocket over adb and using open 
 
 # Ideas to improve the program
 
+- Add mumu support
 - Make the setup less scary for non tech people
 - Make settings configurable from the UI directly
 - Make discord messages prettier

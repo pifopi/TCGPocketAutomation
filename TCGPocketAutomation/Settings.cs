@@ -25,7 +25,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
     public class LDPlayerSettings
     {
         public required string Name { get; set; }
-        public required string ADBName { get; set; }
+        public required string SerialName { get; set; }
     }
 
     public class RealPhoneSettings

@@ -1,5 +1,6 @@
-using AdvancedSharpAdbClient;
+﻿using AdvancedSharpAdbClient;
 using AdvancedSharpAdbClient.DeviceCommands;
+using AdvancedSharpAdbClient.Exceptions;
 using AdvancedSharpAdbClient.Models;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -90,17 +91,35 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             IsRunning = false;
         }
 
-        protected virtual async Task ConnectToADBInstanceAsync(CancellationToken token)
+        protected virtual async Task StartInstanceAsync(CancellationToken token)
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             await instanceSemaphore.WaitAsync(token);
         }
 
-        protected virtual Task DisconnectFromADBInstanceAsync()
+        protected virtual Task StopInstanceAsync()
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
             instanceSemaphore.Release();
             return Task.CompletedTask;
+        }
+
+        protected abstract Task ConnectToADBInstanceAsync(CancellationToken token);
+
+        protected abstract Task DisconnectFromADBInstanceAsync();
+
+        private async Task StartApplicationAsync(CancellationToken token)
+        {
+            using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
+            // StartAppAsync does not work properly, so do it by hand
+            Utils.ExecuteCmd($"adb -s {deviceData.Serial} shell am start -n jp.pokemon.pokemontcgp/com.unity3d.player.UnityPlayerActivity");
+            await WaitForTitleScreenAsync(TimeSpan.FromMinutes(1), token);
+        }
+
+        private async Task StopApplicationAsync()
+        {
+            using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
+            await adbClient.StopAppAsync(deviceData, "jp.pokemon.pokemontcgp");
         }
 
         protected async Task WaitForTitleScreenAsync(TimeSpan timeout, CancellationToken parentToken)
@@ -276,6 +295,8 @@ namespace TCGPocketAutomation.TCGPocketAutomation
         private async Task CheckWonderPickOnceAsync(CancellationToken token)
         {
             using LogContext logContext = new(Logger.LogLevel.Debug, LogHeader);
+            await GoPastTitleScreenAsync(TimeSpan.FromSeconds(30), token);
+            await ReturnToMainMenuAsync(TimeSpan.FromSeconds(30), token);
             await OpenWonderPickMenuAsync(TimeSpan.FromSeconds(30), token);
 
             await Task.Delay(TimeSpan.FromSeconds(30), token);
@@ -300,17 +321,36 @@ namespace TCGPocketAutomation.TCGPocketAutomation
         {
             while (!programCts.IsCancellationRequested)
             {
+                bool wait = true;
                 try
                 {
+                    await StartInstanceAsync(programCts.Token);
                     await ConnectToADBInstanceAsync(programCts.Token);
+                    await StartApplicationAsync(programCts.Token);
                     await CheckWonderPickOnceAsync(programCts.Token);
-                    await DisconnectFromADBInstanceAsync();
-                    await Task.Delay(TimeSpan.FromMinutes(15), programCts.Token);
                 }
                 catch (Exception exception)
                 {
                     Logger.Log(Logger.LogLevel.Warning, LogHeader, $"<@{SettingsManager.Settings.DiscordUserId}> An exception has been raised:{exception}");
+                    wait = false;
+                }
+                finally
+                {
+                    await StopApplicationAsync();
                     await DisconnectFromADBInstanceAsync();
+                    await StopInstanceAsync();
+                }
+
+                if (wait)
+                {
+                    try
+                    {
+                        await Task.Delay(TimeSpan.FromMinutes(15), programCts.Token);
+                    }
+                    catch (Exception exception)
+                    {
+                        Logger.Log(Logger.LogLevel.Warning, LogHeader, $"<@{SettingsManager.Settings.DiscordUserId}> An exception has been raised:{exception}");
+                    }
                 }
             }
         }
@@ -319,7 +359,9 @@ namespace TCGPocketAutomation.TCGPocketAutomation
         {
             try
             {
+                await StartInstanceAsync(programCts.Token);
                 await ConnectToADBInstanceAsync(programCts.Token);
+                await StartApplicationAsync(programCts.Token);
                 await CheckWonderPickOnceAsync(programCts.Token);
             }
             catch (Exception exception)
@@ -328,9 +370,81 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             }
             finally
             {
+                await StopApplicationAsync();
                 await DisconnectFromADBInstanceAsync();
-                StopProgram();
+                await StopInstanceAsync();
+            }
+            StopProgram();
+        }
+    }
+
+    public abstract class ADBInstanceViaIP : ADBInstance
+    {
+        private string _ip = "127.0.0.1";
+        private int _port = 5555;
+
+        public string IP
+        {
+            get => _ip;
+            set { _ip = value; OnPropertyChanged(); }
+        }
+
+        public int Port
+        {
+            get => _port;
+            set { _port = value; OnPropertyChanged(); }
+        }
+
+        protected override async Task ConnectToADBInstanceAsync(CancellationToken token)
+        {
+            string resultConnect = await adbClient.ConnectAsync(IP, Port, token);
+            if (resultConnect != $"connected to {IP}:{Port}" &&
+                resultConnect != $"already connected to {IP}:{Port}")
+            {
+                throw new Exception(resultConnect);
+            }
+            deviceData = await Utils.GetDeviceDataFromAsync(adbClient, $"{IP}:{Port}", TimeSpan.FromMinutes(1), token);
+            await Task.Delay(TimeSpan.FromSeconds(30), token);
+        }
+
+        protected override async Task DisconnectFromADBInstanceAsync()
+        {
+            try
+            {
+                await adbClient.DisconnectAsync(IP, Port);
+            }
+            catch (AdbException exception)
+            {
+                Logger.Log(Logger.LogLevel.Warning, LogHeader, $"<@{SettingsManager.Settings.DiscordUserId}> An exception has been raised:{exception}");
+            }
+            finally
+            {
+                deviceData = new DeviceData();
             }
         }
+    }
+
+    public abstract class ADBInstanceViaSerial : ADBInstance
+    {
+        private string _serialName = "emulator-5555";
+
+        public string SerialName
+        {
+            get => _serialName;
+            set { _serialName = value; OnPropertyChanged(); }
+        }
+
+        protected override async Task ConnectToADBInstanceAsync(CancellationToken token)
+        {
+            deviceData = await Utils.GetDeviceDataFromAsync(adbClient, SerialName, TimeSpan.FromMinutes(1), token);
+            await Task.Delay(TimeSpan.FromSeconds(30), token);
+        }
+
+        protected override Task DisconnectFromADBInstanceAsync()
+        {
+            deviceData = new DeviceData();
+            return Task.CompletedTask;
+        }
+
     }
 }
