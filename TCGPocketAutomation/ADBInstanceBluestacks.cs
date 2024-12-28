@@ -52,7 +52,6 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"One semaphore to release ({emulatorSemaphore.CurrentCount} available)");
             hasTakenEmulatorSemaphore = false;
 
-            deviceData = new DeviceData();
             Utils.ExecuteCmd($"taskkill /fi \"WINDOWTITLE eq {Name}\" /IM \"HD-Player.exe\" /F");
             await Task.Delay(TimeSpan.FromSeconds(10));
 

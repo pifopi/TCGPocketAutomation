@@ -1,4 +1,4 @@
-﻿using AdvancedSharpAdbClient.Models;
+using AdvancedSharpAdbClient.Models;
 using System.IO;
 
 namespace TCGPocketAutomation.TCGPocketAutomation
@@ -50,8 +50,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"One semaphore to release ({emulatorSemaphore.CurrentCount} available)");
             hasTakenEmulatorSemaphore = false;
 
-            deviceData = new DeviceData();
-            string executablePath = Path.Combine(SettingsManager.Settings.LDPlayerPath ?? "", "ldconsole.exe");
+                        string executablePath = Path.Combine(SettingsManager.Settings.LDPlayerPath ?? "", "ldconsole.exe");
             Utils.ExecuteCmd($"{executablePath} quit --name {LDPlayerName}");
             await Task.Delay(TimeSpan.FromSeconds(10));
 
