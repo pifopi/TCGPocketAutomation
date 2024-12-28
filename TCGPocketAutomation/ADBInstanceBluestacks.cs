@@ -1,4 +1,5 @@
 ﻿using AdvancedSharpAdbClient.Models;
+using System.IO;
 
 namespace TCGPocketAutomation.TCGPocketAutomation
 {
@@ -34,7 +35,8 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             token.ThrowIfCancellationRequested();
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({emulatorSemaphore.CurrentCount} available)");
 
-            Utils.ExecuteCmd($"HD-Player.exe --instance {BlueStacksName}");
+            string executablePath = Path.Combine(SettingsManager.Settings.BlueStacksPath ?? "", "HD-Player.exe");
+            Utils.ExecuteCmd($"{executablePath} --instance {BlueStacksName}");
             await Task.Delay(TimeSpan.FromSeconds(30), token);
         }
 

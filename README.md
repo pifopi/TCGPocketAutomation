@@ -33,7 +33,8 @@ Those are simple scripts to automate pokemon TCG pocket over adb and using open 
 
 ## BlueStacks Setup
 1. Download and install [BlueStacks](https://www.bluestacks.com/fr/index.html).
-2. Add BlueStacks to your system PATH (e.g., `C:\Program Files\BlueStacks_nxt\` on Windows).
+2. Edit the `config/settings.json` file and update the following field:
+   - `BlueStacksPath`: Path to your BlueStacks installation.
 3. Create as many BlueStacks instances as required.
 4. For each instance:
    - Launch the instance and install Pokémon TCG Pocket as you would on a normal phone.
@@ -52,7 +53,8 @@ Those are simple scripts to automate pokemon TCG pocket over adb and using open 
 
 ## LDPlayer Setup
 1. Download and install [LDPlayer](https://en.ldplayer.net/).
-2. Add LDPlayer to your system PATH (e.g., `C:\LDPlayer\LDPlayer9`).
+2. Edit the `config/settings.json` file and update the following field:
+   - `LDPlayerPath`: Path to your LDPlayer installation.
 3. Create as many LDPlayer instances as required.
 4. For each instance:
    - Launch the instance and install Pokémon TCG Pocket as you would on a normal phone.

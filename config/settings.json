@@ -1,6 +1,7 @@
 {
   "DiscordChannelId": 1294233612727750721,
   "DiscordUserId": 282197676982927375,
+  "BlueStacksPath": "C:\\Program Files\\BlueStacks_nxt",
   "BlueStacksMaxParallelInstance": 4,
   "BlueStacksInstances": [
     {
@@ -64,6 +65,7 @@
       "BlueStacksName": "Pie64_11"
     }
   ],
+  "LDPlayerPath": "C:\\LDPlayer\\LDPlayer9",
   "LDPlayerMaxParallelInstance": 3,
   "LDPlayerInstances": [
     {

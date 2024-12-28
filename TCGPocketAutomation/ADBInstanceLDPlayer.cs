@@ -1,4 +1,5 @@
 ﻿using AdvancedSharpAdbClient.Models;
+using System.IO;
 
 namespace TCGPocketAutomation.TCGPocketAutomation
 {
@@ -32,7 +33,8 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             token.ThrowIfCancellationRequested();
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({emulatorSemaphore.CurrentCount} available)");
 
-            Utils.ExecuteCmd($"ldconsole.exe launch --name {LDPlayerName}");
+            string executablePath = Path.Combine(SettingsManager.Settings.LDPlayerPath ?? "", "ldconsole.exe");
+            Utils.ExecuteCmd($"{executablePath} launch --name {LDPlayerName}");
             await Task.Delay(TimeSpan.FromSeconds(30), token);
         }
 
@@ -49,7 +51,8 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             hasTakenEmulatorSemaphore = false;
 
             deviceData = new DeviceData();
-            Utils.ExecuteCmd($"ldconsole.exe quit --name {LDPlayerName}");
+            string executablePath = Path.Combine(SettingsManager.Settings.LDPlayerPath ?? "", "ldconsole.exe");
+            Utils.ExecuteCmd($"{executablePath} quit --name {LDPlayerName}");
             await Task.Delay(TimeSpan.FromSeconds(10));
 
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Releasing a semaphore ({emulatorSemaphore.CurrentCount} available)");

@@ -7,8 +7,10 @@ namespace TCGPocketAutomation.TCGPocketAutomation
     {
         public ulong DiscordUserId { get; set; }
         public ulong DiscordChannelId { get; set; }
+        public string? BlueStacksPath { get; set; }
         public int BlueStacksMaxParallelInstance { get; set; } = new();
         public List<BlueStacksSettings> BlueStacksInstances { get; set; } = [];
+        public string? LDPlayerPath { get; set; }
         public int LDPlayerMaxParallelInstance { get; set; } = new();
         public List<LDPlayerSettings> LDPlayerInstances { get; set; } = [];
         public List<RealPhoneSettings> RealPhoneInstances { get; set; } = [];
