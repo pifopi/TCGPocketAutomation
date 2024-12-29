@@ -50,8 +50,8 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"One semaphore to release ({emulatorSemaphore.CurrentCount} available)");
             hasTakenEmulatorSemaphore = false;
 
-                        string executablePath = Path.Combine(SettingsManager.Settings.LDPlayerPath ?? "", "ldconsole.exe");
-            Utils.ExecuteCmd($"{executablePath} quit --name {LDPlayerName}");
+            string executablePath = Path.Combine(SettingsManager.Settings.LDPlayerPath ?? "", "ldconsole.exe");
+            Utils.ExecuteCmd($"\"{executablePath}\" quit --name {LDPlayerName}");
             await Task.Delay(TimeSpan.FromSeconds(10));
 
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Releasing a semaphore ({emulatorSemaphore.CurrentCount} available)");
