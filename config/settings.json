@@ -1,6 +1,50 @@
 {
   "DiscordChannelId": 1294233612727750721,
   "DiscordUserId": 282197676982927375,
+  "MuMuPath": "C:\\Program Files\\Netease\\MuMuPlayerGlobal-12.0",
+  "MuMuMaxParallelInstance": 4,
+  "MuMuInstances": [
+    {
+      "Name": "Compte 01",
+      "MuMuId": 10
+    },
+    {
+      "Name": "Compte 02 - Mewtwo",
+      "MuMuId": 11
+    },
+    {
+      "Name": "Compte 03 - Mewtwo",
+      "MuMuId": 12
+    },
+    {
+      "Name": "Compte 04 - Mewtwo",
+      "MuMuId": 13
+    },
+    {
+      "Name": "Compte 05 - Pikachu",
+      "MuMuId": 14
+    },
+    {
+      "Name": "Compte 06 - Pikachu",
+      "MuMuId": 15
+    },
+    {
+      "Name": "Compte 07 - Pikachu",
+      "MuMuId": 16
+    },
+    {
+      "Name": "Compte 08 - Dracaufeu",
+      "MuMuId": 17
+    },
+    {
+      "Name": "Compte 09 - Dracaufeu",
+      "MuMuId": 18
+    },
+    {
+      "Name": "Compte 10 - Dracaufeu",
+      "MuMuId": 19
+    }
+  ],
   "BlueStacksPath": "C:\\Program Files\\BlueStacks_nxt",
   "BlueStacksMaxParallelInstance": 4,
   "BlueStacksInstances": [

@@ -35,7 +35,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             token.ThrowIfCancellationRequested();
             Logger.Log(Logger.LogLevel.Info, LogHeader, $"Got a semaphore ({emulatorSemaphore.CurrentCount} available)");
 
-            string executablePath = Path.Combine(SettingsManager.Settings.BlueStacksPath ?? "", "HD-Player.exe");
+            string executablePath = Path.Combine(SettingsManager.Settings.BlueStacksPath, "HD-Player.exe");
             Utils.ExecuteCmd($"\"{executablePath}\" --instance {BlueStacksName}");
             await Task.Delay(TimeSpan.FromSeconds(30), token);
         }

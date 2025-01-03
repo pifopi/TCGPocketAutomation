@@ -10,6 +10,7 @@ namespace TCGPocketAutomation.TCGPocketAutomation
     /// </summary>
     public partial class MainWindow : Window
     {
+        public ObservableCollection<ADBInstanceMuMu> ADBInstancesMuMu { get; set; } = [];
         public ObservableCollection<ADBInstanceBlueStacks> ADBInstancesBlueStacks { get; set; } = [];
         public ObservableCollection<ADBInstanceLDPlayer> ADBInstancesLDPlayer { get; set; } = [];
         public ObservableCollection<ADBInstanceRealPhoneViaIP> ADBInstancesRealPhoneViaIP { get; set; } = [];
@@ -23,6 +24,16 @@ namespace TCGPocketAutomation.TCGPocketAutomation
 
             Logger.Log(Logger.LogLevel.Info, "", "-------------------------------------------------------------------------");
             Logger.Log(Logger.LogLevel.Info, "", $"<@{SettingsManager.Settings.DiscordUserId}> Starting the program");
+
+            ADBInstanceMuMu.SetMaxParallelInstance(SettingsManager.Settings.MuMuMaxParallelInstance);
+            foreach (var s in SettingsManager.Settings.MuMuInstances)
+            {
+                ADBInstancesMuMu.Add(new ADBInstanceMuMu
+                {
+                    Name = s.Name,
+                    MuMuId = s.MuMuId
+                });
+            }
 
             ADBInstanceBlueStacks.SetMaxParallelInstance(SettingsManager.Settings.BlueStacksMaxParallelInstance);
             foreach (var s in SettingsManager.Settings.BlueStacksInstances)

@@ -8,6 +8,43 @@
     <Grid>
         <StackPanel>
             <TextBlock>
+                MuMu instances
+            </TextBlock>
+            <DataGrid ItemsSource="{Binding ADBInstancesMuMu}"
+                AutoGenerateColumns="False"
+                CanUserAddRows="False"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch">
+                <DataGrid.Columns>
+                    <DataGridTextColumn Header="Name" Binding="{Binding Name, Mode=OneWay}" />
+                    <DataGridTextColumn Header="MuMu Id" Binding="{Binding MuMuId, Mode=OneWay}" />
+                    <DataGridTextColumn Header="Is Running" Binding="{Binding IsRunning, Mode=OneWay}" />
+                    <DataGridTemplateColumn Header="Selected Program">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <ComboBox ItemsSource="{Binding ProgramList}" SelectedItem="{Binding SelectedProgram, UpdateSourceTrigger=PropertyChanged}" IsEnabled="{Binding IsNotRunning}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Start">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Execute" Click="StartProgram" IsEnabled="{Binding IsNotRunning}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                    <DataGridTemplateColumn Header="Stop">
+                        <DataGridTemplateColumn.CellTemplate>
+                            <DataTemplate>
+                                <Button Content="Execute" Click="StopProgram" IsEnabled="{Binding IsRunning}" />
+                            </DataTemplate>
+                        </DataGridTemplateColumn.CellTemplate>
+                    </DataGridTemplateColumn>
+                </DataGrid.Columns>
+            </DataGrid>
+
+
+            <TextBlock>
                 BlueStacks instances
             </TextBlock>
             <DataGrid ItemsSource="{Binding ADBInstancesBlueStacks}"

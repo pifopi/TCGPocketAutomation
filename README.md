@@ -13,8 +13,9 @@ Those are simple scripts to automate pokemon TCG pocket over adb and using open 
 4. Add ADB to your system PATH.
 5. Edit the log configuration file located in `config/nlog.config`. Focus only on the `rules` section and ignore other parts. For example:
    - Remove the line related to Discord logging if you are not interested in logging messages to a Discord server. If you keep it, you will need to complete the Discord setup detailed below.
-6. Decide how you wish to run the program. Currently, there are three supported methods:
-   - **BlueStacks (recommended)**
+6. Decide how you wish to run the program. Currently, there are four supported methods:
+   - **MuMu (recommended)**
+   - **BlueStacks**
    - **LDPlayer**
    - **Real Phone**
 
@@ -28,6 +29,23 @@ Those are simple scripts to automate pokemon TCG pocket over adb and using open 
 3. Edit the program configuration file in `config/settings.json`. Ensure it remains valid JSON after editing. Update the following fields:
    - `DiscordChannelId`: The channel where your bot will post messages.
    - `DiscordUserId`: Your Discord ID to receive notifications when warnings are triggered.
+
+---
+
+## MuMu Setup
+1. Download and install [MuMu](https://www.mumuplayer.com/). You can also follow [this video](https://www.youtube.com/watch?v=sasJE7sHNVQ) to translate MuMu.
+2. Edit the `config/settings.json` file and update the following field:
+   - `MuMuPath`: Path to your MuMu installation.
+3. Create as many MuMu instances as required.
+4. For each instance:
+   - Launch the instance and install Pokémon TCG Pocket as you would on a normal phone.
+   - Open the game and proceed to the main menu where you see Boosters, Wonder Picks, and Shop.
+   - Go to the instance settings, then go to **Performance** settings, and allocate resources based on your machine (e.g., 2 cores and 2 GB RAM per instance).
+5. Edit the `config/settings.json` file and update the following fields:
+   - `MuMuMaxParallelInstance`: Maximum number of parallel MuMu instances.
+   - `MuMuInstances`: Details about each instance:
+     - `Name`: Friendly identifier for the instance.
+     - `MuMuId`: Id of the instance, the number you see before instance's name on MuMu
 
 ---
 
@@ -93,18 +111,16 @@ Those are simple scripts to automate pokemon TCG pocket over adb and using open 
 
 ## Bluestacks issues
 
-- Sometimes, when an instance is opened, Pokémon TCG Pocket will be missing from the phone, leading to repeated issues afterwards. Out of my 10 instances, it happeneds maybe once every 2 days and I couldn't figure out why.
+- Sometimes, when an instance is opened, Pokémon TCG Pocket will be missing from the phone, leading to repeated issues afterwards. When that happen, stopping the program, redownloading + linking your account fix the issue.
 - Having only one core allocated to an instance seems to not let other executable use that core and will lead to massive freeze if you do not have enough core (oddly enough, 2 core seems fine as the OS will schedule everything).
 
 ## LDplayer issues
 
-- Sometimes, when an instance is opened, it will have lost internet access (and thus not appear in adb devices list)
-. When that happen, closing everything and rebooting the machine fix the issue. I found several people reporting the same online, such as [here on their discord](https://discord.com/channels/715095525979848783/864741116653731860/1128566336914735264).
+- Sometimes, when an instance is opened, it will have lost internet access (and thus not appear in adb devices list). When that happen, closing everything and rebooting the machine fix the issue. I found several people reporting the same online, such as [here on their discord](https://discord.com/channels/715095525979848783/864741116653731860/1128566336914735264).
 - Having only one core allocated to an instance seems to not let other executable use that core and will lead to massive freeze if you do not have enough core (oddly enough, 2 core seems fine as the OS will schedule everything).
 
 # Ideas to improve the program
 
-- Add mumu support
 - Make the setup less scary for non tech people
 - Make settings configurable from the UI directly
 - Make discord messages prettier

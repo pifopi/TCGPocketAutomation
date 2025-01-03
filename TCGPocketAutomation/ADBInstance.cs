@@ -445,6 +445,5 @@ namespace TCGPocketAutomation.TCGPocketAutomation
             deviceData = new DeviceData();
             return Task.CompletedTask;
         }
-
     }
 }
